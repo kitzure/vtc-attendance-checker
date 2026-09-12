@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="VTC attendance checker" />
+    <meta property="og:description" content="copy the bookmarklet -> myportal -> inject -> done" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kitzure.github.io/vtc-attendance-checker/" />
+    <meta name="theme-color" content="#2563eb" />
+    <title>VTC attendance checker</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .attendance-page {
+        width: min(92vw, 520px);
+        padding: 3rem 1.5rem;
+        text-align: center;
+      }
+      .lang-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 6px 10px;
+        background: #ffffff;
+        color: #2563eb;
+        cursor: pointer;
+        font: 600 0.75rem inherit;
+      }
+      .lang-btn:hover {
+        background: #eff6ff;
+      }
+      .attendance-header {
+        margin-bottom: 1.75rem;
+      }
+      .attendance-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      .get-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+      }
+      .disclaimer-box {
+        margin: 0;
+      }
+
+      .attendance-kicker {
+        margin: 0 0 0.65rem;
+        color: #2563eb;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .attendance-panel {
+        padding: 2.25rem 1.5rem 1.5rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        background: #ffffff;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+      }
+
+      .attendance-panel .title-fun {
+        animation: none;
+        color: #111827;
+        text-shadow: none;
+      }
+
+      .attendance-copy {
+        max-width: 33rem;
+        margin: 0 auto 1.5rem;
+        color: #4b5563;
+        font-size: 0.82rem;
+        line-height: 1.6;
+      }
+
+      .get-btn {
+        min-width: min(100%, 220px);
+        justify-content: center;
+        padding: 0.75rem 1.25rem;
+      }
+
+      .get-btn::after {
+        content: '\2192';
+        font-size: 1rem;
+        transition: transform 0.2s ease;
+      }
+
+      .get-btn:hover::after {
+        transform: translateX(3px);
+      }
+
+      @media (max-width: 480px) {
+        .attendance-page {
+          padding: 2.5rem 1rem;
+        }
+
+        .attendance-panel {
+          padding: 2rem 1rem 1.25rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container attendance-page">
+      <button id="lang-toggle" class="lang-btn" type="button" title="Switch language">&#127760; EN</button>
+
+      <section class="attendance-panel">
+        <header class="site-header attendance-header">
+          <p class="attendance-kicker">VTC student tool</p>
+          <h1 class="title-fun" id="page-title">VTC attendance checker</h1>
+          <p class="home-subtitle" id="page-subtitle">copy the bookmarklet -> myportal -> inject -> done</p>
+        </header>
+
+        <p class="attendance-copy">Check your attendance across modules from the VTC portal with one small browser bookmark.</p>
+
+        <div id="step1" class="attendance-actions">
+          <a id="get-btn" class="vtc-btn get-btn" href="src/bookmarklet/help.html">
+            <span id="get-btn-text">get bookmarklet</span>
+          </a>
+
+          <div class="disclaimer-box">
+            <span>&#9888;</span>
+            <span id="disclaimer-text">for reference only &mdash; not 100% confirmed. always double-check with your official attendance.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="src/vtc-attendance.js"></script>
+    <script>
+      (function () {
+        var i18n = {
+          en: {
+            title: 'VTC attendance checker',
+            subtitle: 'copy the bookmarklet -> myportal -> inject -> done',
+            btn: 'get bookmarklet',
+            disclaimer: 'for reference only &mdash; not 100% confirmed. always double-check with your official attendance.',
+            label: '&#127760; EN'
+          },
+          zh: {
+            title: 'VTC 出席率Checker',
+            subtitle: 'copy 個 bookmarklet -> myportal -> 貼上 -> 搞掂',
+            btn: '攞 bookmarklet',
+            disclaimer: '只供參考 &mdash; 未必 100% 準確。請以官方出席紀錄為準。',
+            label: '&#127760; 中文'
+          }
+        };
+
+        var lang = localStorage.getItem('vtc-page-lang') || 'en';
+        var btn = document.getElementById('lang-toggle');
+
+        function setLang(code) {
+          lang = code;
+          localStorage.setItem('vtc-page-lang', code);
+          var t = i18n[code];
+          document.getElementById('page-title').textContent = t.title;
+          document.getElementById('page-subtitle').textContent = t.subtitle;
+          document.getElementById('get-btn-text').textContent = t.btn;
+          document.getElementById('disclaimer-text').innerHTML = t.disclaimer;
+          btn.innerHTML = t.label;
+        }
+
+        btn.addEventListener('click', function () {
+          setLang(lang === 'en' ? 'zh' : 'en');
+        });
+        setLang(lang);
+      })();
+    </script>
+  </body>
+</html>

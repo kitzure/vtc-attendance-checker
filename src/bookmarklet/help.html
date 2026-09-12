@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="how to use the bookmarklet" />
+    <meta property="og:description" content="copy this bookmarklet and paste into your browser. it works on any VTC page." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kitzure.github.io/vtc-attendance-checker/src/bookmarklet/help.html" />
+    <meta name="theme-color" content="#2563eb" />
+    <title>how to use — bookmarklet</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <style>
+      .lang-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: rgba(252,211,77,0.12);
+        border: 1px solid rgba(252,211,77,0.25);
+        color: #fcd34d;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 2;
+      }
+      .lang-btn:hover { background: rgba(252,211,77,0.2); }
+
+      .help-container {
+        width: 100%;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 3.5rem 1.25rem 2.5rem;
+        position: relative;
+      }
+
+      .help-intro {
+        max-width: 40rem;
+        margin: 0 auto 2rem;
+        color: #4b5563;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      .help-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+        gap: 2.5rem;
+        align-items: start;
+      }
+
+      .help-left-col,
+      .help-video-col {
+        min-width: 0;
+      }
+
+      .help-left-col {
+        padding: 1.5rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.06);
+      }
+
+      .help-video-col {
+        position: sticky;
+        top: 1rem;
+      }
+
+      @media (max-width: 640px) {
+        .help-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .help-video-col {
+          position: static;
+          grid-row: 1;
+        }
+
+        .help-left-col {
+          padding: 1.25rem;
+        }
+
+        .help-video-col {
+          order: -1;
+        }
+      }
+
+      .help-section-title {
+        margin: 0 0 0.6rem;
+        font-size: 1rem;
+        color: #fcd34d;
+        font-weight: 600;
+      }
+
+      .help-section-desc {
+        margin: 0 0 0.8rem;
+        font-size: 0.8rem;
+        color: #a8a29e;
+        line-height: 1.5;
+      }
+
+      .bm-wrap {
+        position: relative;
+        margin-bottom: 1.75rem;
+      }
+
+      .bm-textarea {
+        width: 100%;
+        height: auto;
+        min-height: 4.5rem;
+        background: #0a0a0a;
+        border: 1px solid rgba(252,211,77,0.2);
+        border-radius: 8px;
+        padding: 0.5rem;
+        font-family: monospace;
+        font-size: 0.72rem;
+        color: #d6d3d1;
+        resize: none;
+        outline: none;
+      }
+
+      .copy-bm-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        background: rgba(120,53,15,0.5);
+        border: 1px solid rgba(252,211,77,0.25);
+        color: #fbbf24;
+        font-size: 0.7rem;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      .help-video {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.15);
+        background: #000;
+        cursor: pointer;
+        display: block;
+        margin: 0 auto;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+      }
+
+      .tutorial-btns {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin: 0.5rem 0;
+      }
+
+      .tutorial-btn {
+        padding: 0.35rem 0.9rem;
+        border-radius: 6px;
+        background: rgba(252,211,77,0.05);
+        border: 1px solid rgba(252,211,77,0.2);
+        color: #a8a29e;
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      .tutorial-btn.active {
+        background: rgba(252,211,77,0.2);
+        border-color: rgba(252,211,77,0.4);
+        color: #fbbf24;
+      }
+
+      .steps-title {
+        margin: 1.2rem 0 0.8rem;
+        font-size: 1rem;
+        color: #fef3c7;
+        font-weight: 600;
+      }
+
+      .step-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .step-num {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(252,211,77,0.15);
+        border: 1px solid rgba(252,211,77,0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fbbf24;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .step-title {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #fef3c7;
+        font-weight: 600;
+      }
+
+      .step-desc {
+        margin: 0.2rem 0 0;
+        font-size: 0.8rem;
+        color: #a8a29e;
+        line-height: 1.5;
+      }
+
+      .step-desc a {
+        color: #2563eb;
+      }
+
+      .lang-btn {
+        background: #ffffff;
+        border-color: #d1d5db;
+        color: #2563eb;
+      }
+
+      .lang-btn:hover {
+        background: #eff6ff;
+      }
+
+      .help-section-title,
+      .steps-title {
+        color: #111827;
+      }
+
+      .help-section-desc,
+      .step-desc {
+        color: #4b5563;
+      }
+
+      .bm-textarea {
+        background: #ffffff;
+        border-color: #d1d5db;
+        color: #1f2937;
+      }
+
+      .copy-bm-btn {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #ffffff;
+      }
+
+      .copy-bm-btn:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+      }
+
+      .tutorial-btn {
+        background: #ffffff;
+        border-color: #d1d5db;
+        color: #4b5563;
+      }
+
+      .tutorial-btn.active {
+        background: #eff6ff;
+        border-color: #93c5fd;
+        color: #1d4ed8;
+      }
+
+      .step-num {
+        background: #eff6ff;
+        border-color: #93c5fd;
+        color: #1d4ed8;
+      }
+
+      .step-title {
+        color: #1f2937;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="help-container">
+      <a class="back-sq-top-left" href="../../index.html">&larr;</a>
+      <button id="lang-toggle" class="lang-btn" type="button" title="Switch language">&#127760; EN</button>
+
+      <header class="site-header" style="margin-bottom: 0.5rem;">
+        <h1 class="title-fun" id="page-title">how to use the bookmarklet</h1>
+      </header>
+
+      <p class="help-intro">Set it up once, then use it from any VTC portal page whenever you want to check your latest attendance.</p>
+
+      <div class="help-grid">
+        <!-- LEFT COLUMN -->
+        <div class="help-left-col">
+          <p id="bm-label" class="help-section-title">copy this bookmarklet</p>
+          <p id="bm-desc" class="help-section-desc">create a new browser bookmark and paste this into the URL field. it works on any VTC page.</p>
+
+          <div class="bm-wrap">
+            <textarea id="bmCodeCombined" class="bm-textarea" readonly rows="5">javascript:(function(d){var s=d.createElement('script');s.src='https://kitzure.github.io/vtc-attendance-checker/src/bookmarklet/vtc-combined-grabber.js?t='+Math.floor(Date.now()/60000);d.body.append(s);})(document);</textarea>
+            <button class="copy-bm-btn" data-target="bmCodeCombined">copy</button>
+          </div>
+
+          <p id="steps-title" class="steps-title">steps</p>
+
+          <div class="step-row">
+            <div class="step-num">1</div>
+            <div>
+              <p id="s1-title" class="step-title">log in to the VTC portal</p>
+              <p id="s1-desc" class="step-desc">go to <a href="https://myportal.vtc.edu.hk/wps/myportal/sp/spostud/" target="_blank">myportal.vtc.edu.hk</a> and make sure you're logged in.</p>
+            </div>
+          </div>
+
+          <div class="step-row">
+            <div class="step-num">2</div>
+            <div>
+              <p id="s2-title" class="step-title">click the bookmark</p>
+              <p id="s2-desc" class="step-desc">a dark status card pops up. it fetches your calendar lessons in the background, then finds your attendance record page and grabs your present / late / absent status for every module.</p>
+            </div>
+          </div>
+
+          <div class="step-row">
+            <div class="step-num">3</div>
+            <div>
+              <p id="s3-title" class="step-title">tracker opens automatically</p>
+              <p id="s3-desc" class="step-desc">the attendance tracker opens and immediately shows rates for all modules. thats all.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="help-video-col">
+          <video id="tutorialVideo" class="help-video timetable-video" src="../../img/tutorial.mp4" poster="../../img/tutorial-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+          <div class="tutorial-btns">
+            <button class="tutorial-btn active" data-mode="pc" id="btn-pc">PC</button>
+            <button class="tutorial-btn" data-mode="mobile" id="btn-mobile">Mobile</button>
+          </div>
+          <p id="video-hint" class="video-hint" style="text-align:center;">tap to zoom in for tutorial</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* Language toggle */
+      (function () {
+        var i18n = {
+          en: {
+            title: 'how to use the bookmarklet',
+            bmLabel: 'copy this bookmarklet',
+            bmDesc: 'create a new browser bookmark and paste this into the URL field. it works on any VTC page.',
+            copy: 'copy',
+            copied: 'copied!',
+            pc: 'PC',
+            mobile: 'Mobile',
+            videoHint: 'tap to zoom in for tutorial',
+            steps: 'steps',
+            s1Title: 'log in to the VTC portal',
+            s1Desc: 'go to <a href="https://myportal.vtc.edu.hk/wps/myportal/sp/spostud/" target="_blank" style="color: #2563eb;">myportal.vtc.edu.hk</a> and make sure you\'re logged in.',
+            s2Title: 'click the bookmark',
+            s2Desc: 'a dark status card pops up. it fetches your calendar lessons in the background, then finds your attendance record page and grabs your present / late / absent status for every module.',
+            s3Title: 'tracker opens automatically',
+            s3Desc: 'the attendance tracker opens and immediately shows rates for all modules. thats all.',
+            label: '&#127760; EN'
+          },
+          zh: {
+            title: '點用呢個bookmarklet？',
+            bmLabel: 'copy 呢個 bookmarklet',
+            bmDesc: '開個新書籤，將呢段 code 貼落去個網址欄度就得。喺任何 VTC 頁面都用到。',
+            copy: 'copy',
+            copied: 'copied!',
+            pc: '電腦',
+            mobile: '電話',
+            videoHint: '撳一下可以放大睇教學',
+            steps: '步驟',
+            s1Title: '登入 VTC Portal',
+            s1Desc: '確保你係<a href="https://myportal.vtc.edu.hk/wps/myportal/sp/spostud/" target="_blank" style="color: #2563eb;">myportal.vtc.edu.hk</a>登入咗。',
+            s2Title: '撳個 bookmark',
+            s2Desc: '會彈個 status card 出嚟。佢會喺背後攞你嘅 calendar 課堂，跟住搵你嘅出席紀錄頁面，係逐個單元攞晒 present / late / absent 狀態。',
+            s3Title: 'tracker 自動開',
+            s3Desc: '出席率 tracker 會自動彈出，即時顯示所有單元嘅出席率。',
+            label: '&#127760; 中文'
+          }
+        };
+
+        window.i18nHelp = i18n;
+        var lang = localStorage.getItem('vtc-page-lang') || 'en';
+        var btn = document.getElementById('lang-toggle');
+
+        function setLang(code) {
+          lang = code;
+          localStorage.setItem('vtc-page-lang', code);
+          var t = i18n[code];
+          document.querySelector('#page-title').textContent = t.title;
+          document.getElementById('bm-label').textContent = t.bmLabel;
+          document.getElementById('bm-desc').textContent = t.bmDesc;
+          document.getElementById('btn-pc').textContent = t.pc;
+          document.getElementById('btn-mobile').textContent = t.mobile;
+          document.getElementById('video-hint').textContent = t.videoHint;
+          document.getElementById('steps-title').textContent = t.steps;
+          document.getElementById('s1-title').textContent = t.s1Title;
+          document.getElementById('s1-desc').innerHTML = t.s1Desc;
+          document.getElementById('s2-title').textContent = t.s2Title;
+          document.getElementById('s2-desc').textContent = t.s2Desc;
+          document.getElementById('s3-title').textContent = t.s3Title;
+          document.getElementById('s3-desc').textContent = t.s3Desc;
+          btn.innerHTML = t.label;
+          document.querySelectorAll('.copy-bm-btn').forEach(function (b) {
+            if (b.textContent !== t.copied && b.textContent !== i18n[code === 'en' ? 'zh' : 'en'].copied) {
+              b.textContent = t.copy;
+            }
+          });
+        }
+
+        btn.addEventListener('click', function () {
+          setLang(lang === 'en' ? 'zh' : 'en');
+        });
+        setLang(lang);
+      })();
+
+      document.querySelectorAll('.copy-bm-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var target = document.getElementById(this.getAttribute('data-target'));
+          if (target) {
+            target.select();
+            document.execCommand('copy');
+            var code = localStorage.getItem('vtc-page-lang') || 'en';
+            this.textContent = (window.i18nHelp && window.i18nHelp[code] && window.i18nHelp[code].copied) || 'copied!';
+            var self = this;
+            setTimeout(function () {
+              var c = localStorage.getItem('vtc-page-lang') || 'en';
+              self.textContent = (window.i18nHelp && window.i18nHelp[c] && window.i18nHelp[c].copy) || 'copy';
+            }, 1500);
+          }
+        });
+      });
+
+      /* video click-to-zoom */
+      document.querySelectorAll('.timetable-video').forEach(function (video) {
+        video.style.cursor = 'pointer';
+        video.addEventListener('click', function () {
+          if (video.classList.contains('zoomed')) {
+            video.classList.remove('zoomed');
+            var bd = document.querySelector('.video-backdrop');
+            if (bd) bd.remove();
+            return;
+          }
+          var bd = document.createElement('div');
+          bd.className = 'video-backdrop';
+          document.body.appendChild(bd);
+          video.classList.add('zoomed');
+          bd.addEventListener('click', function () {
+            video.classList.remove('zoomed');
+            bd.remove();
+          });
+        });
+      });
+
+      /* tutorial mode switcher */
+      var tutorialVideo = document.getElementById('tutorialVideo');
+      var tutorialBtns = document.querySelectorAll('.tutorial-btn');
+      tutorialBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var mode = this.getAttribute('data-mode');
+          tutorialBtns.forEach(function (b) {
+            b.classList.remove('active');
+          });
+          this.classList.add('active');
+          if (mode === 'pc') {
+            tutorialVideo.src = '../../img/tutorial.mp4';
+            tutorialVideo.poster = '../../img/tutorial-poster.jpg';
+            tutorialVideo.style.width = '100%';
+            tutorialVideo.style.maxWidth = '100%';
+            tutorialVideo.style.margin = '';
+          } else {
+            tutorialVideo.src = '../../img/mobile.mp4';
+            tutorialVideo.removeAttribute('poster');
+            tutorialVideo.style.width = 'auto';
+            tutorialVideo.style.maxWidth = '260px';
+            tutorialVideo.style.display = 'block';
+            tutorialVideo.style.margin = '0 auto';
+          }
+          tutorialVideo.load();
+          tutorialVideo.play();
+        });
+      });
+    </script>
+  </body>
+</html>
