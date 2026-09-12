@@ -416,7 +416,7 @@
     // Build static structure once
     vtcStatusCard.innerHTML =
       '<div class="vtc-status-header">' +
-        '<span style="font-size:16px;">&#127859;</span>' +
+        '<span style="font-size:16px;">&#9989;</span>' +
         '<span class="vtc-status-title">VTC Attendance Grabber</span>' +
       '</div>' +
       '<div class="vtc-status-sub">' +
@@ -2288,7 +2288,7 @@
       if (eggBtn) eggBtn.remove();
       eggBtn = document.createElement('button');
       eggBtn.id = 'vtc-egg-reopen';
-      eggBtn.innerHTML = '🍳';
+      eggBtn.innerHTML = '&#9989;';
       eggBtn.title = 'reopen VTC dashboard';
       eggBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:2147483646;width:48px;height:48px;border-radius:50%;background:rgba(252,211,77,0.15);border:1px solid rgba(252,211,77,0.3);color:#fcd34d;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
       eggBtn.addEventListener('click', () => {
