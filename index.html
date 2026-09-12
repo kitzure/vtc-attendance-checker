@@ -11,6 +11,54 @@
     <title>VTC attendance checker</title>
     <link rel="stylesheet" href="style.css" />
     <style>
+      body {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        background: #0a0a0a;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: -8%;
+        z-index: -2;
+        background: url('img/img.png') 48% 44% / cover no-repeat;
+        filter: saturate(0.82) contrast(1.05);
+        transform-origin: center;
+        animation: portalBackdropDrift 24s ease-in-out infinite alternate;
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(135deg, rgba(8, 15, 30, 0.78), rgba(15, 23, 42, 0.48));
+        pointer-events: none;
+      }
+
+      @keyframes portalBackdropDrift {
+        0% {
+          background-position: 48% 44%;
+          transform: scale(1.03) translate3d(-1.5%, -1%, 0) rotate(-0.35deg);
+        }
+        50% {
+          background-position: 54% 49%;
+          transform: scale(1.07) translate3d(0.5%, 0.5%, 0) rotate(0.2deg);
+        }
+        100% {
+          background-position: 58% 55%;
+          transform: scale(1.12) translate3d(1.5%, 1%, 0) rotate(0.45deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        body::before {
+          animation: none;
+        }
+      }
+
       .attendance-page {
         width: min(92vw, 520px);
         padding: 3rem 1.5rem;
@@ -27,6 +75,12 @@
         color: #2563eb;
         cursor: pointer;
         font: 600 0.75rem inherit;
+      }
+
+      .attendance-panel .lang-btn {
+        top: 1rem;
+        right: 1rem;
+        z-index: 2;
       }
       .lang-btn:hover {
         background: #eff6ff;
@@ -60,11 +114,36 @@
       }
 
       .attendance-panel {
+        position: relative;
+        overflow: hidden;
         padding: 2.25rem 1.5rem 1.5rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 20px;
-        background: #ffffff;
-        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 28px 10px 28px 10px;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.88));
+        backdrop-filter: blur(8px);
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24), 0 0 0 8px rgba(255, 255, 255, 0.12);
+      }
+
+      .attendance-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 38%;
+        height: 5px;
+        background: linear-gradient(90deg, #2563eb, #38bdf8, transparent);
+      }
+
+      .attendance-panel::after {
+        content: '';
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        width: 46px;
+        height: 46px;
+        border-right: 2px solid rgba(37, 99, 235, 0.18);
+        border-bottom: 2px solid rgba(37, 99, 235, 0.18);
+        pointer-events: none;
       }
 
       .attendance-panel .title-fun {
@@ -103,6 +182,7 @@
         }
 
         .attendance-panel {
+          border-radius: 22px 8px 22px 8px;
           padding: 2rem 1rem 1.25rem;
         }
       }
@@ -110,9 +190,9 @@
   </head>
   <body>
     <main class="container attendance-page">
-      <button id="lang-toggle" class="lang-btn" type="button" title="Switch language">&#127760; EN</button>
-
       <section class="attendance-panel">
+        <button id="lang-toggle" class="lang-btn" type="button" title="Switch language">&#127760; EN</button>
+
         <header class="site-header attendance-header">
           <p class="attendance-kicker">VTC student tool</p>
           <h1 class="title-fun" id="page-title">VTC attendance checker</h1>

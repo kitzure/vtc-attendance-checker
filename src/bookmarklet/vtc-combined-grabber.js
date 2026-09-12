@@ -277,7 +277,7 @@
     #vtc-integrated-status .vtc-status-title {
       font-size: 15px;
       font-weight: 700;
-      color: #fcd34d;
+      color: #e5e7eb;
       letter-spacing: 0.3px;
     }
     #vtc-integrated-status .vtc-status-sub {
@@ -291,8 +291,8 @@
     #vtc-integrated-status .vtc-spinner {
       width: 18px;
       height: 18px;
-      border: 2.5px solid rgba(252,211,77,0.2);
-      border-top-color: #fcd34d;
+      border: 2.5px solid rgba(96,165,250,0.2);
+      border-top-color: #60a5fa;
       border-radius: 50%;
       animation: vtc-spin 0.8s linear infinite;
       flex-shrink: 0;
@@ -326,10 +326,10 @@
       gap: 8px;
       padding: 3px 0;
       font-size: 13px;
-      color: #a8a29e;
+      color: #a1a1aa;
     }
     #vtc-integrated-status .vtc-step.active {
-      color: #fef3c7;
+      color: #bfdbfe;
     }
     #vtc-integrated-status .vtc-step.done {
       color: #34d399;
@@ -338,11 +338,11 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #a8a29e;
+      background: #71717a;
       flex-shrink: 0;
     }
     #vtc-integrated-status .vtc-step.active .vtc-dot {
-      background: #fcd34d;
+      background: #60a5fa;
       animation: vtc-pulse 1.2s ease-in-out infinite;
     }
     #vtc-integrated-status .vtc-step.done .vtc-dot {
@@ -404,10 +404,10 @@
       st.border = '1px solid rgba(11,61,145,0.08)';
       st.boxShadow = '0 10px 24px rgba(14,30,37,0.06)';
     } else {
-      st.color = '#fef3c7';
-      st.background = 'rgba(10, 10, 10, 0.97)';
-      st.border = '1px solid rgba(252, 211, 77, 0.2)';
-      st.boxShadow = '0 20px 40px rgba(0,0,0,0.6)';
+      st.color = '#e5e7eb';
+      st.background = 'rgba(3, 15, 35, 0.98)';
+      st.border = '1px solid rgba(96, 165, 250, 0.2)';
+      st.boxShadow = '0 20px 40px rgba(2, 8, 23, 0.82)';
     }
     if (st.backdropFilter !== undefined) st.backdropFilter = 'blur(10px)';
     // add a class so CSS (statusStyles) can target portal variant
@@ -445,11 +445,11 @@
         }
       } else {
         const titleEl = vtcStatusCard.querySelector('.vtc-status-title');
-        if (titleEl) titleEl.style.color = '#fcd34d';
-        if (statusHeaderTitle) statusHeaderTitle.style.color = '#fbbf24';
+        if (titleEl) titleEl.style.color = '#e5e7eb';
+        if (statusHeaderTitle) statusHeaderTitle.style.color = '#60a5fa';
         if (statusHeaderIcon) {
-          statusHeaderIcon.style.border = '2.5px solid rgba(252,211,77,0.2)';
-          statusHeaderIcon.style.borderTopColor = '#fcd34d';
+          statusHeaderIcon.style.border = '2.5px solid rgba(96,165,250,0.2)';
+          statusHeaderIcon.style.borderTopColor = '#60a5fa';
         }
       }
     } catch (e) { /* ignore */ }
@@ -474,7 +474,7 @@
       statusHeaderIcon.innerHTML = '';
       statusHeaderIcon.style.background = '';
       statusHeaderIcon.style.color = '';
-      statusHeaderTitle.style.color = '#fbbf24';
+      statusHeaderTitle.style.color = '#60a5fa';
       statusHeaderTitle.textContent = tStatus('statusGrabbingTitle');
     }
   }
@@ -2085,6 +2085,56 @@
         #vtc-attendance-dashboard-overlay.vtc-mode-desktop table {
           width: 100% !important;
           min-width: 900px !important;
+        }
+
+        /* Dark portal theme: the light theme's blue palette, pushed into deep navy. */
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) {
+          background: #020b18 !important;
+          color: #e5e7eb !important;
+        }
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-dashboard,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-sticky-header {
+          background: #020b18 !important;
+        }
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-muted,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) td {
+          color: #a1a1aa !important;
+        }
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) h1,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) th,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) [style*="color:#fcd34d"],
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) [style*="color:#fbbf24"] {
+          color: #93c5fd !important;
+        }
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) [style*="background: rgba(10,10,10"],
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) [style*="background:rgba(10,10,10"],
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) [style*="background: #141414"],
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) [style*="background: rgba(120,53,15"] {
+          background: #071a33 !important;
+          border-color: rgba(96,165,250,0.2) !important;
+          color: #e5e7eb !important;
+        }
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-th-tip::after,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-bar-tip::after {
+          background: #071a33;
+          border-color: rgba(96,165,250,0.2);
+          color: #93c5fd;
+        }
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-semester-select,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-lang-select,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-threshold-select,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-hours-input {
+          background: #071a33 !important;
+          border-color: rgba(96,165,250,0.35) !important;
+          color: #bfdbfe !important;
+        }
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-export-filter-btn,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-edit,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-close,
+        #vtc-attendance-dashboard-overlay:not(.vtc-theme-portal) .vtc-theme-btn {
+          background: #071a33 !important;
+          border-color: rgba(96,165,250,0.35) !important;
+          color: #93c5fd !important;
         }
       </style>
 

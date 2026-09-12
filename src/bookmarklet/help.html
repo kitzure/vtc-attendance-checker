@@ -11,6 +11,11 @@
     <title>how to use — bookmarklet</title>
     <link rel="stylesheet" href="../../style.css" />
     <style>
+      body.help-page {
+        display: block;
+        min-height: 100vh;
+      }
+
       .lang-btn {
         position: absolute;
         top: 0.75rem;
@@ -35,14 +40,15 @@
         width: 100%;
         max-width: 960px;
         margin: 0 auto;
-        padding: 3.5rem 1.25rem 2.5rem;
+        padding: 4.5rem 1.25rem 3rem;
         position: relative;
+        z-index: 1;
       }
 
       .help-intro {
         max-width: 40rem;
         margin: 0 auto 2rem;
-        color: #4b5563;
+        color: #475569;
         font-size: 0.88rem;
         line-height: 1.6;
         text-align: center;
@@ -61,16 +67,34 @@
       }
 
       .help-left-col {
+        position: relative;
+        overflow: hidden;
         padding: 1.5rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        background: #ffffff;
-        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.06);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 26px 10px 26px 10px;
+        background: rgba(248, 250, 252, 0.95);
+        box-shadow: 0 24px 50px rgba(2, 8, 23, 0.28), 0 0 0 7px rgba(148, 163, 184, 0.08);
+      }
+
+      .help-left-col::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 42%;
+        height: 5px;
+        background: linear-gradient(90deg, #2563eb, #38bdf8, transparent);
       }
 
       .help-video-col {
         position: sticky;
         top: 1rem;
+        padding: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 10px 26px 10px 26px;
+        background: rgba(15, 23, 42, 0.76);
+        box-shadow: 0 24px 50px rgba(2, 8, 23, 0.3);
+        backdrop-filter: blur(12px);
       }
 
       @media (max-width: 640px) {
@@ -89,6 +113,14 @@
 
         .help-video-col {
           order: -1;
+        }
+
+        #video-type-tabs {
+          gap: 0.65rem;
+        }
+
+        #video-type-tabs .tutorial-btn {
+          font-size: 0.72rem;
         }
       }
 
@@ -156,6 +188,51 @@
         gap: 0.5rem;
         justify-content: center;
         margin: 0.5rem 0;
+      }
+
+      #video-type-tabs {
+        gap: 1.25rem;
+        margin: 0 0 1rem;
+        padding: 0 0.25rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.55);
+      }
+
+      #video-type-tabs .tutorial-btn {
+        position: relative;
+        padding: 0.7rem 0.2rem 0.6rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #cbd5e1;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      #video-type-tabs .tutorial-btn:hover {
+        color: #ffffff;
+        background: transparent;
+      }
+
+      #video-type-tabs .tutorial-btn.active {
+        color: #1d4ed8;
+        background: transparent;
+        border-color: transparent;
+      }
+
+      #video-type-tabs .tutorial-btn.active::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: -1px;
+        left: 0;
+        height: 3px;
+        border-radius: 3px 3px 0 0;
+        background: #2563eb;
+      }
+
+      .video-hint {
+        margin: 0.65rem 0 0;
+        color: #cbd5e1;
       }
 
       .tutorial-btn {
@@ -281,7 +358,7 @@
       }
     </style>
   </head>
-  <body>
+  <body class="help-page">
     <div class="help-container">
       <a class="back-sq-top-left" href="../../index.html">&larr;</a>
       <button id="lang-toggle" class="lang-btn" type="button" title="Switch language">&#127760; EN</button>
@@ -328,12 +405,24 @@
               <p id="s3-desc" class="step-desc">the attendance tracker opens and immediately shows rates for all modules. thats all.</p>
             </div>
           </div>
+
+          <div class="step-row">
+            <div class="step-num">4</div>
+            <div>
+              <p id="s4-title" class="step-title">export lessons to your calendar</p>
+              <p id="s4-desc" class="step-desc">click <strong>export ICS</strong>, select the modules you want, then import the downloaded file into Google Calendar, Apple Calendar, or Outlook.</p>
+            </div>
+          </div>
         </div>
 
         <!-- RIGHT COLUMN -->
         <div class="help-video-col">
+          <div class="tutorial-btns" id="video-type-tabs">
+            <button class="tutorial-btn active" data-video-type="tutorial" id="btn-tutorial">Tutorial</button>
+            <button class="tutorial-btn" data-video-type="ics" id="btn-ics">ICS export tutorial</button>
+          </div>
           <video id="tutorialVideo" class="help-video timetable-video" src="../../img/tutorial.mp4" poster="../../img/tutorial-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
-          <div class="tutorial-btns">
+          <div class="tutorial-btns" id="device-tabs">
             <button class="tutorial-btn active" data-mode="pc" id="btn-pc">PC</button>
             <button class="tutorial-btn" data-mode="mobile" id="btn-mobile">Mobile</button>
           </div>
@@ -354,6 +443,8 @@
             copied: 'copied!',
             pc: 'PC',
             mobile: 'Mobile',
+            tutorial: 'Tutorial',
+            icsTutorial: 'ICS export tutorial',
             videoHint: 'tap to zoom in for tutorial',
             steps: 'steps',
             s1Title: 'log in to the VTC portal',
@@ -362,6 +453,8 @@
             s2Desc: 'a dark status card pops up. it fetches your calendar lessons in the background, then finds your attendance record page and grabs your present / late / absent status for every module.',
             s3Title: 'tracker opens automatically',
             s3Desc: 'the attendance tracker opens and immediately shows rates for all modules. thats all.',
+            s4Title: 'export lessons to your calendar',
+            s4Desc: 'click <strong>export ICS</strong>, select the modules you want, then import the downloaded file into Google Calendar, Apple Calendar, or Outlook.',
             label: '&#127760; EN'
           },
           zh: {
@@ -372,6 +465,8 @@
             copied: 'copied!',
             pc: '電腦',
             mobile: '電話',
+            tutorial: '教學',
+            icsTutorial: 'ICS 匯出教學',
             videoHint: '撳一下可以放大睇教學',
             steps: '步驟',
             s1Title: '登入 VTC Portal',
@@ -380,6 +475,8 @@
             s2Desc: '會彈個 status card 出嚟。佢會喺背後攞你嘅 calendar 課堂，跟住搵你嘅出席紀錄頁面，係逐個單元攞晒 present / late / absent 狀態。',
             s3Title: 'tracker 自動開',
             s3Desc: '出席率 tracker 會自動彈出，即時顯示所有單元嘅出席率。',
+            s4Title: '將課堂匯出到日曆',
+            s4Desc: '撳 <strong>export ICS</strong>，揀你想要嘅單元，再將下載嘅檔案匯入 Google Calendar、Apple Calendar 或 Outlook。',
             label: '&#127760; 中文'
           }
         };
@@ -397,6 +494,8 @@
           document.getElementById('bm-desc').textContent = t.bmDesc;
           document.getElementById('btn-pc').textContent = t.pc;
           document.getElementById('btn-mobile').textContent = t.mobile;
+          document.getElementById('btn-tutorial').textContent = t.tutorial;
+          document.getElementById('btn-ics').textContent = t.icsTutorial;
           document.getElementById('video-hint').textContent = t.videoHint;
           document.getElementById('steps-title').textContent = t.steps;
           document.getElementById('s1-title').textContent = t.s1Title;
@@ -405,6 +504,8 @@
           document.getElementById('s2-desc').textContent = t.s2Desc;
           document.getElementById('s3-title').textContent = t.s3Title;
           document.getElementById('s3-desc').textContent = t.s3Desc;
+          document.getElementById('s4-title').textContent = t.s4Title;
+          document.getElementById('s4-desc').innerHTML = t.s4Desc;
           btn.innerHTML = t.label;
           document.querySelectorAll('.copy-bm-btn').forEach(function (b) {
             if (b.textContent !== t.copied && b.textContent !== i18n[code === 'en' ? 'zh' : 'en'].copied) {
@@ -459,30 +560,62 @@
 
       /* tutorial mode switcher */
       var tutorialVideo = document.getElementById('tutorialVideo');
-      var tutorialBtns = document.querySelectorAll('.tutorial-btn');
-      tutorialBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var mode = this.getAttribute('data-mode');
-          tutorialBtns.forEach(function (b) {
-            b.classList.remove('active');
-          });
-          this.classList.add('active');
-          if (mode === 'pc') {
-            tutorialVideo.src = '../../img/tutorial.mp4';
-            tutorialVideo.poster = '../../img/tutorial-poster.jpg';
-            tutorialVideo.style.width = '100%';
-            tutorialVideo.style.maxWidth = '100%';
-            tutorialVideo.style.margin = '';
-          } else {
+      var videoTypeTabs = document.querySelectorAll('#video-type-tabs .tutorial-btn');
+      var deviceTabs = document.querySelectorAll('#device-tabs .tutorial-btn');
+      var deviceTabWrap = document.getElementById('device-tabs');
+
+      function setDeviceVideo(mode) {
+        if (mode === 'pc') {
+          tutorialVideo.src = '../../img/tutorial.mp4';
+          tutorialVideo.poster = '../../img/tutorial-poster.jpg';
+          tutorialVideo.style.width = '100%';
+          tutorialVideo.style.maxWidth = '100%';
+          tutorialVideo.style.display = 'block';
+          tutorialVideo.style.margin = '';
+        } else {
             tutorialVideo.src = '../../img/mobile.mp4';
             tutorialVideo.removeAttribute('poster');
             tutorialVideo.style.width = 'auto';
             tutorialVideo.style.maxWidth = '260px';
             tutorialVideo.style.display = 'block';
             tutorialVideo.style.margin = '0 auto';
+        }
+        tutorialVideo.load();
+        tutorialVideo.play();
+      }
+
+      videoTypeTabs.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var videoType = this.getAttribute('data-video-type');
+          videoTypeTabs.forEach(function (tab) {
+            tab.classList.remove('active');
+          });
+          this.classList.add('active');
+          if (videoType === 'ics') {
+            deviceTabWrap.style.display = 'none';
+            tutorialVideo.src = '../../img/ics.mp4';
+            tutorialVideo.removeAttribute('poster');
+            tutorialVideo.style.width = '100%';
+            tutorialVideo.style.maxWidth = '100%';
+            tutorialVideo.style.display = 'block';
+            tutorialVideo.style.margin = '';
+            tutorialVideo.load();
+            tutorialVideo.play();
+            return;
           }
-          tutorialVideo.load();
-          tutorialVideo.play();
+          deviceTabWrap.style.display = '';
+          var activeDeviceTab = document.querySelector('#device-tabs .tutorial-btn.active');
+          setDeviceVideo(activeDeviceTab ? activeDeviceTab.getAttribute('data-mode') : 'pc');
+        });
+      });
+
+      deviceTabs.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          deviceTabs.forEach(function (tab) {
+            tab.classList.remove('active');
+          });
+          this.classList.add('active');
+          setDeviceVideo(this.getAttribute('data-mode'));
         });
       });
     </script>
