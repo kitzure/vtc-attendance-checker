@@ -2340,7 +2340,7 @@
       eggBtn.id = 'vtc-egg-reopen';
       eggBtn.innerHTML = '&#9989;';
       eggBtn.title = 'reopen VTC dashboard';
-      eggBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:2147483646;width:48px;height:48px;border-radius:50%;background:rgba(252,211,77,0.15);border:1px solid rgba(252,211,77,0.3);color:#fcd34d;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
+      eggBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:2147483646;width:48px;height:48px;border-radius:50%;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:#2563eb;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
       eggBtn.addEventListener('click', () => {
         eggBtn.remove();
         renderDashboardOverlay(semesterSummaries, details, calendarEvents);
