@@ -16,13 +16,6 @@ The bookmarklet runs on the VTC page while you are signed in. It uses the browse
 
 The result is shown in a dashboard and saved locally in the browser as `vtc-integrated-data`. The default threshold is 70%.
 
-## Use it
-
-1. Open the website and select **get bookmarklet**.
-2. Add it to your browser bookmarks.
-3. Sign in to VTC, switch the portal to English, and run the bookmarklet.
-4. Wait for the dashboard, then verify important results against the official record.
-
 ## Notes
 
 - This repo is 100% vibe-coded. If you have any questions, don't ask me.
