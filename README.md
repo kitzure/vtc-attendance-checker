@@ -1,4 +1,4 @@
-# VTC attendance checker
+# VTC attendance checker (VTC 出席率checker)
 ![VTC attendance checker](img/img.png)
 A browser bookmarklet for checking attendance across VTC modules.
 
