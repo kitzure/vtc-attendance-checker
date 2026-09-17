@@ -762,9 +762,12 @@ h1 {
   position: fixed;
   top: 50%;
   left: 50%;
-  max-width: 92vw;
-  max-height: 92vh;
-  width: auto;
+  width: auto !important;
+  height: auto !important;
+  max-width: calc(100vw - 2rem) !important;
+  max-height: calc(100vh - 2rem) !important;
+  max-height: calc(100dvh - 2rem) !important;
+  object-fit: contain;
   border-radius: 14px;
   border: 2px solid rgba(255, 255, 255, 0.25);
   z-index: 100;

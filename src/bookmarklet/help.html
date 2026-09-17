@@ -545,15 +545,18 @@
             video.classList.remove('zoomed');
             var bd = document.querySelector('.video-backdrop');
             if (bd) bd.remove();
+            document.body.style.overflow = '';
             return;
           }
           var bd = document.createElement('div');
           bd.className = 'video-backdrop';
           document.body.appendChild(bd);
           video.classList.add('zoomed');
+          document.body.style.overflow = 'hidden';
           bd.addEventListener('click', function () {
             video.classList.remove('zoomed');
             bd.remove();
+            document.body.style.overflow = '';
           });
         });
       });
