@@ -762,11 +762,10 @@ h1 {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: auto !important;
-  height: auto !important;
-  max-width: calc(100vw - 2rem) !important;
-  max-height: calc(100vh - 2rem) !important;
-  max-height: calc(100dvh - 2rem) !important;
+  width: calc(100vw - 2rem) !important;
+  height: calc(100vh - 2rem) !important;
+  max-width: none !important;
+  max-height: none !important;
   object-fit: contain;
   border-radius: 14px;
   border: 2px solid rgba(255, 255, 255, 0.25);
