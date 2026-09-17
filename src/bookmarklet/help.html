@@ -426,7 +426,7 @@
             <button class="tutorial-btn active" data-mode="pc" id="btn-pc">PC</button>
             <button class="tutorial-btn" data-mode="mobile" id="btn-mobile">Mobile</button>
           </div>
-          <p id="video-hint" class="video-hint" style="text-align:center;">tap to zoom in for tutorial</p>
+          <p id="video-hint" class="video-hint" style="text-align:center;">use the controls to watch the tutorial</p>
         </div>
       </div>
     </div>
@@ -445,7 +445,7 @@
             mobile: 'Mobile',
             tutorial: 'Tutorial',
             icsTutorial: 'ICS export tutorial',
-            videoHint: 'tap to zoom in for tutorial',
+            videoHint: 'use the controls to watch the tutorial',
             steps: 'steps',
             s1Title: 'log in to the VTC portal',
             s1Desc: 'go to <a href="https://myportal.vtc.edu.hk/wps/myportal/sp/spostud/" target="_blank" style="color: #2563eb;">myportal.vtc.edu.hk</a> and make sure you\'re logged in.',
@@ -467,7 +467,7 @@
             mobile: '電話',
             tutorial: '教學',
             icsTutorial: 'ICS 匯出教學',
-            videoHint: '撳一下可以放大睇教學',
+            videoHint: '用控制掣睇教學',
             steps: '步驟',
             s1Title: '登入 VTC Portal',
             s1Desc: '確保你係<a href="https://myportal.vtc.edu.hk/wps/myportal/sp/spostud/" target="_blank" style="color: #2563eb;">myportal.vtc.edu.hk</a>登入咗。',
@@ -534,30 +534,6 @@
               self.textContent = (window.i18nHelp && window.i18nHelp[c] && window.i18nHelp[c].copy) || 'copy';
             }, 1500);
           }
-        });
-      });
-
-      /* video click-to-zoom */
-      document.querySelectorAll('.timetable-video').forEach(function (video) {
-        video.style.cursor = 'pointer';
-        video.addEventListener('click', function () {
-          if (video.classList.contains('zoomed')) {
-            video.classList.remove('zoomed');
-            var bd = document.querySelector('.video-backdrop');
-            if (bd) bd.remove();
-            document.body.style.overflow = '';
-            return;
-          }
-          var bd = document.createElement('div');
-          bd.className = 'video-backdrop';
-          document.body.appendChild(bd);
-          video.classList.add('zoomed');
-          document.body.style.overflow = 'hidden';
-          bd.addEventListener('click', function () {
-            video.classList.remove('zoomed');
-            bd.remove();
-            document.body.style.overflow = '';
-          });
         });
       });
 

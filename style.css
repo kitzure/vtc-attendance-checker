@@ -736,17 +736,6 @@ h1 {
   font-size: 0.8rem;
 }
 
-@keyframes videoPopIn {
-  from {
-    transform: translate(-50%, -50%) scale(0.92);
-    opacity: 0;
-  }
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
-
 .timetable-video {
   width: 100%;
   max-width: 320px;
@@ -755,30 +744,7 @@ h1 {
   margin-bottom: 0.3rem;
   margin-top: 0.5rem;
   background: #000;
-  cursor: pointer;
-}
-
-.timetable-video.zoomed {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: calc(100vw - 2rem) !important;
-  height: calc(100vh - 2rem) !important;
-  max-width: none !important;
-  max-height: none !important;
-  object-fit: contain;
-  border-radius: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  z-index: 100;
-  animation: videoPopIn 0.2s cubic-bezier(.2,.9,.3,1) forwards;
-}
-
-.video-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 99;
-  cursor: pointer;
+  cursor: default;
 }
 
 .video-hint {

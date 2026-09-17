@@ -289,30 +289,3 @@ if (backToModules) backToModules.addEventListener('click', function () {
   step1.classList.remove('hidden');
   mainBack.classList.remove('hidden');
 });
-
-/* video click-to-zoom */
-(function () {
-  var videos = document.querySelectorAll('.timetable-video');
-  videos.forEach(function (video) {
-    video.style.cursor = 'pointer';
-    video.addEventListener('click', function () {
-      if (video.classList.contains('zoomed')) {
-        video.classList.remove('zoomed');
-        var bd = document.querySelector('.video-backdrop');
-        if (bd) bd.remove();
-        document.body.style.overflow = '';
-        return;
-      }
-      var bd = document.createElement('div');
-      bd.className = 'video-backdrop';
-      document.body.appendChild(bd);
-      video.classList.add('zoomed');
-      document.body.style.overflow = 'hidden';
-      bd.addEventListener('click', function () {
-        video.classList.remove('zoomed');
-        bd.remove();
-        document.body.style.overflow = '';
-      });
-    });
-  });
-})();
