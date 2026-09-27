@@ -17,6 +17,6 @@ just go to myportal w/account then bookmark the page and change the link to the 
 * **Current Rate:** `(Attended Minutes / Past Class Minutes) * 100`
 * **Max Rate:** `((Attended Minutes + Future Class Minutes) / Total Scheduled Minutes) * 100`
 
-##notes
+## notes
 * its 100% ai slop, fork if you want to improve it
 * not planning to continue fixing it, since it was a small project
