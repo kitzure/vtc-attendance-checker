@@ -1011,8 +1011,7 @@
   };
 
   // Read explicit module totals from the page and each fetched attendance form.
-  // The staff CAS report in the supplied photograph is a different origin and
-  // cannot be fetched with the student's MyPortal session.
+  // No cohort-specific defaults: each student's totals come from their data.
   (async () => {
     const core = window.VtcAttendanceCore;
     pushStep(tStatus('statusFetchingEvents'));
@@ -1028,14 +1027,23 @@
     let html = await findClassAttendancePage();
     const modules = getModules(parseHtml(html));
     const details = [];
-    const officialHours = core.extractOfficialHours(document);
+    const officialHours = {}, conflictingHours = new Set();
+    const mergeHours = found => {
+      for (const [code, hours] of Object.entries(found)) {
+        if (conflictingHours.has(code)) continue;
+        if (officialHours[code] != null && officialHours[code] !== hours) {
+          delete officialHours[code]; conflictingHours.add(code);
+        } else officialHours[code] = hours;
+      }
+    };
+    mergeHours(core.extractOfficialHours(document));
     pushStep(tStatus('statusGrabbingModules').replace('{n}', modules.length));
     for (let idx = 0; idx < modules.length; idx++) {
       const module = modules[idx];
       updateStatus(tStatus('statusGrabbingModuleProgress').replace('{current}', idx + 1).replace('{total}', modules.length).replace('{name}', module.text));
       html = await submitModule(html, module);
       const doc = parseHtml(html);
-      Object.assign(officialHours, core.extractOfficialHours(doc, module.value));
+      mergeHours(core.extractOfficialHours(doc, module.value));
       parseRows(doc).forEach(row => {
         const date = core.detailDate(row);
         if (date && date >= RANGE_START && date < RANGE_END) details.push({ moduleCode: module.value, moduleText: module.text, ...row });

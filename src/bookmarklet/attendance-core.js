@@ -2,17 +2,8 @@
 (function (root) {
   'use strict';
   const round = (n, places = 2) => +n.toFixed(places);
-  const report = Object.freeze({
-    academicYear: 2026,
-    date: '2026-10-07',
-    hours: Object.freeze({ ENG3446: 13, ITE4116M: 104, ITP4206: 52, ITP4230: 52, ITP4233: 39, LAN4103: 26, SDD4007: 13 })
-  });
   const codeFromText = text => String(text || '').toUpperCase().match(/\b[A-Z]{2,4}\d{4}[A-Z]?\b/)?.[0] || '';
   const academicYear = date => date.getMonth() < 8 ? date.getFullYear() - 1 : date.getFullYear();
-  function matchesReport(modules, date = new Date()) {
-    const codes = [...new Set(modules.map(m => m.value || m.moduleCode))].sort();
-    return academicYear(date) === report.academicYear && codes.join('|') === Object.keys(report.hours).sort().join('|');
-  }
   function timeToMinutes(value) {
     const m = String(value || '').trim().match(/^(\d{1,2}):(\d{2})(?:\s*([ap]m))?$/i);
     if (!m) return null;
@@ -97,11 +88,18 @@
     });
   }
   // Read only explicit totals, never individual lesson durations or percentages.
-  // This also accepts the CODE (N hr) headers in the school class report.
+  // Totals must belong to a module; credits and lesson lengths are not totals.
   function extractOfficialHours(doc, moduleCode = '') {
     const hours = {};
+    const codesIn = text => [...new Set(String(text || '').toUpperCase().match(/\b[A-Z]{2,4}\d{4}[A-Z]?\b/g) || [])];
+    const totalLabel = /(?:total\s+(?:scheduled\s+|contact\s+|teaching\s+)?hours|module\s+(?:contact\s+)?hours|總時數|總課時)/i;
+    const valueOf = text => {
+      const match = String(text || '').trim().match(/^(\d+(?:\.\d+)?)\s*(?:hr?s?|hours?|小時)?$/i);
+      return match ? +match[1] : null;
+    };
     const add = (code, value) => {
-      if (code && value > 0 && value <= 2000) {
+      code = String(code || '').toUpperCase();
+      if (/^[A-Z]{2,4}\d{4}[A-Z]?$/.test(code) && Number.isFinite(value) && value > 0 && value <= 2000) {
         if (hours[code] != null && hours[code] !== value) hours[code] = null;
         else if (!(code in hours)) hours[code] = value;
       }
@@ -109,21 +107,39 @@
     for (const el of doc.querySelectorAll('th, option, [data-module-hours], .module-hours')) {
       const text = String(el.textContent || '').replace(/\s+/g, ' ');
       const match = text.match(/\b([A-Z]{2,4}\d{4}[A-Z]?)\b.{0,120}?\(\s*(\d+(?:\.\d+)?)\s*(?:hr?s?|hours?|小時|時數)\s*\)/i);
-      if (match) add(match[1].toUpperCase(), +match[2]);
+      if (match && codesIn(text).length === 1) add(match[1].toUpperCase(), +match[2]);
       if (el.hasAttribute('data-module-hours')) add(el.getAttribute('data-module-code') || moduleCode, +el.getAttribute('data-module-hours'));
     }
-    if (moduleCode) {
-      for (const el of doc.querySelectorAll('label, p, td, span')) {
+    // Column tables: module code and explicitly labelled total-hours column.
+    for (const table of doc.querySelectorAll('table')) {
+      const rows = [...table.rows];
+      const header = rows.find(row => [...row.cells].some(cell => totalLabel.test(cell.textContent)));
+      if (!header) continue;
+      const column = [...header.cells].findIndex(cell => totalLabel.test(cell.textContent));
+      for (const row of rows.slice(rows.indexOf(header) + 1)) {
+        const codes = codesIn([...row.cells].map(cell => cell.textContent).join(' '));
+        if (codes.length === 1) add(codes[0], valueOf(row.cells[column]?.textContent));
+      }
+    }
+    {
+      for (const el of doc.querySelectorAll('label, p, td, span, dt')) {
         if (el.children.length > 2) continue;
         const text = String(el.textContent || '').replace(/\s+/g, ' ').trim();
         if (text.length > 180) continue;
-        const match = text.match(/(?:total\s+(?:scheduled\s+|contact\s+|teaching\s+)?hours|module\s+(?:contact\s+)?hours|總時數|總課時)\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(?:hr?s?|hours?|小時)?/i);
-        if (match) add(moduleCode, +match[1]);
+        const label = text.match(totalLabel);
+        if (!label) continue;
+        const context = el.tagName === 'TD' ? [...el.parentElement.cells].map(cell => cell.textContent).join(' ') : text;
+        const codes = codesIn(context);
+        const code = codes.length === 1 ? codes[0] : codes.length ? '' : moduleCode;
+        const inline = text.slice(label.index + label[0].length).replace(/^\s*[:：]?\s*/, '');
+        const value = valueOf(inline);
+        if (value != null) add(code, value);
+        else if (!inline && /^(TD|DT|LABEL)$/.test(el.tagName)) add(code, valueOf(el.nextElementSibling?.textContent));
       }
     }
     return Object.fromEntries(Object.entries(hours).filter(([, value]) => value != null));
   }
-  function summarize({ moduleCode, moduleText, rows = [], events = [], officialHours, referenceHours, manualHours, fallbackTotal, threshold = 70, now = new Date(), calendarAvailable = true }) {
+  function summarize({ moduleCode, moduleText, rows = [], events = [], officialHours, manualHours, fallbackTotal, threshold = 70, now = new Date(), calendarAvailable = true }) {
     rows = dedupeDetails(rows);
     events = normalizeEvents(events).filter(e => codeFromText(getEventText(e)) === moduleCode);
     let recordMinutes = 0, attendedMinutes = 0, lateMinutes = 0, unknown = 0;
@@ -159,19 +175,22 @@
       }
     }
     rows.forEach((row, i) => { if (!matched.has(i)) reconciledMinutes += lessonMinutes(row.lessonTime); });
-    const rawCalendarHours = events.length ? events.reduce((sum, e) => sum + eventMinutes(e), 0) / 60 : +(fallbackTotal || 0);
-    const inferredHours = !calendarAvailable && rawCalendarHours ? rawCalendarHours : reconciledMinutes ? reconciledMinutes / 60 : rawCalendarHours;
-    let total = inferredHours || null, source = 'calendar';
-    for (const [value, name] of [[referenceHours, 'report'], [officialHours, 'portal'], [manualHours, 'manual']]) {
+    const importedTotal = Number.isFinite(fallbackTotal) && fallbackTotal > 0 ? fallbackTotal : 0;
+    const rawCalendarHours = events.length ? events.reduce((sum, e) => sum + eventMinutes(e), 0) / 60 : importedTotal;
+    // Records alone are past hours, not evidence of a complete module total.
+    const inferredHours = events.length ? reconciledMinutes / 60 : importedTotal;
+    let total = inferredHours || null, source = total == null ? 'unknown' : 'calendar';
+    for (const [value, name] of [[officialHours, 'portal'], [manualHours, 'manual']]) {
       if (Number.isFinite(value) && value > 0) { total = value; source = name; }
     }
     const issues = [];
+    if (total == null) issues.push('missingTotal');
     if (!calendarAvailable || !events.length) issues.push('noTimeline');
     if (unknown) issues.push('unknownRecords');
     if (unrecordedPastMinutes) issues.push('missingRecords');
     if (total && recordMinutes > total * 60 + 0.01) issues.push('totalTooSmall');
     if (total && calendarAvailable && total * 60 > reconciledMinutes + 1) issues.push('incompleteCalendar');
-    if (total && source !== 'calendar' && Math.abs(total - rawCalendarHours) > 0.01) issues.push('calendarMismatch');
+    if (total && rawCalendarHours && source !== 'calendar' && Math.abs(total - rawCalendarHours) > 0.01) issues.push('calendarMismatch');
     if (source === 'calendar') issues.push('estimatedTotal');
     const remainingMinutes = total == null ? null : Math.max(0, total * 60 - recordMinutes);
     const deductedMinutes = recordMinutes - attendedMinutes;
@@ -207,7 +226,7 @@
       bestStatus70: bestRaw == null ? 'NO_CALENDAR_MATCH' : bestRaw + 1e-9 < threshold ? 'CANNOT_REACH_70_EVEN_IF_FUTURE_PRESENT' : 'CAN_REACH_OR_KEEP_70_IF_FUTURE_PRESENT'
     };
   }
-  const api = { report, academicYear, matchesReport, timeToMinutes, lessonRange, lessonMinutes, statusOf, attendedMinutesFromRow, codeFromText, getEventText, parseVtcDateTime, eventStartEnd, eventMinutes, normalizeEvents, detailDate, dedupeDetails, extractOfficialHours, summarize };
+  const api = { academicYear, timeToMinutes, lessonRange, lessonMinutes, statusOf, attendedMinutesFromRow, codeFromText, getEventText, parseVtcDateTime, eventStartEnd, eventMinutes, normalizeEvents, detailDate, dedupeDetails, extractOfficialHours, summarize };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.VtcAttendanceCore = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

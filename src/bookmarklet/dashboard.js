@@ -10,12 +10,12 @@
       semester: 'Study period', overall: 'Full academic year', language: 'Language', threshold: 'Attendance requirement', source: 'Total hours', auto: 'Automatic hours', calendar: 'Timetable only',
       modules: 'Modules', attention: 'Need attention', missing: 'Need verification', ontrack: 'On track', search: 'Search code or module name', filter: 'Show', all: 'All modules',
       current: 'Recorded attendance', best: 'Best possible', hours: 'Attended / total', remaining: 'Remaining hours', loss: 'Hours lost', absent: 'Absence incl. lateness',
-      portal: 'Portal total', report: 'School report · 7 Oct 2026', manual: 'Edited total', estimate: 'Timetable estimate', raw: 'Timetable', recorded: 'Recorded',
+      portal: 'Portal total', manual: 'Edited total', estimate: 'Timetable estimate', unknown: 'Total unavailable', raw: 'Timetable', recorded: 'Recorded',
       below: 'Below requirement', unreachable: 'Below even at best', noRecord: 'No records', verify: 'Check records',
       headNote: 'Current rates use recorded lessons. Best possible is an upper bound assuming all remaining hours are attended.',
-      referenceNote: 'Your matching 2026/27 module set uses the supplied school report when the portal has no explicit total. You can switch to timetable totals or edit any module.',
       warning: 'Compare with your official attendance record.',
       noTimeline: 'Timetable unavailable. The budget uses recorded attendance and the module total.',
+      missingTotal: 'No module total or timetable found. Edit hours to calculate the absence budget.',
       unknownRecords: 'A status, lesson time or late arrival is missing. Check the lesson records.',
       missingRecords: 'Past timetable lessons have no attendance record. The budget uses the available records and may change when they update.',
       totalTooSmall: 'The total is smaller than recorded hours. Correct it before using projections.',
@@ -23,6 +23,7 @@
       estimatedTotal: 'No official total found. This total is an estimate from the timetable and records.',
       calendarMismatch: 'Timetable hours differ from this total.',
       allowance: 'Remaining absence budget', noAllowance: 'No remaining absence budget', unknownAllowance: 'Check attendance or total hours',
+      estimatedAllowance: 'Estimated absence budget',
       budgetCondition: 'Assumes you attend the other remaining hours.', needAttend: 'Still need to attend at least {hours} h to reach {threshold}%.',
       budgetFormula: 'Absence budget = remaining hours − hours still needed', currentBuffer: 'Can skip now while keeping recorded attendance at {threshold}% or above', noCurrentBuffer: 'No current skip buffer at {threshold}%.',
       details: 'Calculation & lesson records', empty: 'No modules match', emptyHint: 'Try another search or show all modules.', noModules: 'No attendance modules found.',
@@ -38,17 +39,18 @@
       semester: '學期', overall: '整個學年', language: '語言', threshold: '最低出席要求', source: '總時數', auto: '自動選擇時數', calendar: '只用時間表',
       modules: '單元', attention: '需要留意', missing: '需要核實', ontrack: '達到要求', search: '搜尋單元編號或名稱', filter: '顯示', all: '所有單元',
       current: '已記錄出席率', best: '最高可能出席率', hours: '出席 / 總時數', remaining: '剩餘時數', loss: '扣減時數', absent: '缺席率（包括遲到）',
-      portal: 'Portal 總時數', report: '學校報表 · 2026年10月7日', manual: '已修改時數', estimate: '時間表估計', raw: '時間表', recorded: '已記錄',
+      portal: 'Portal 總時數', manual: '已修改時數', estimate: '時間表估計', unknown: '沒有總時數', raw: '時間表', recorded: '已記錄',
       below: '未達要求', unreachable: '最高仍未達要求', noRecord: '沒有紀錄', verify: '核實紀錄',
       headNote: '目前出席率根據已記錄課堂計算。最高可能出席率假設剩餘時數全部出席，只代表上限。',
-      referenceNote: '你的2026/27單元組合符合所提供的學校報表。Portal 沒有列出總時數時會採用報表，可切換時間表或手動修改。',
       warning: '請與官方出席紀錄核對。',
       noTimeline: '沒有時間表。可缺席時數按已記錄出席及單元總時數計算。',
+      missingTotal: '找不到單元總時數或時間表。請編輯時數以計算可缺席時數。',
       unknownRecords: '狀態、課堂時間或遲到時間不完整，請核對課堂紀錄。',
       missingRecords: '已過去的課堂缺少出席紀錄。可缺席時數按現有紀錄計算，紀錄更新後可能改變。',
       totalTooSmall: '總時數少於已記錄時數，請先更正。', incompleteCalendar: '時間表未涵蓋總時數，可缺席時數按單元總時數計算。',
       estimatedTotal: '未找到官方總時數，目前按時間表及紀錄估計。', calendarMismatch: '時間表時數與所用總時數不同。',
       allowance: '剩餘可缺席時數', noAllowance: '沒有剩餘可缺席時數', unknownAllowance: '請核對出席紀錄或總時數',
+      estimatedAllowance: '估計可缺席時數',
       budgetCondition: '假設其餘剩餘時數全部出席。', needAttend: '仍須出席至少 {hours} 小時，才能達到 {threshold}%。',
       budgetFormula: '可缺席時數 = 剩餘時數 − 仍須出席時數', currentBuffer: '現在可缺席且仍維持已記錄出席率至少 {threshold}%', noCurrentBuffer: '目前沒有維持 {threshold}% 的可缺席餘額。',
       details: '計算及課堂紀錄', empty: '沒有符合條件的單元', emptyHint: '試試其他搜尋或顯示所有單元。', noModules: '找不到出席單元。',
@@ -69,7 +71,6 @@
     const dates = data.scrapedAt ? new Date(data.scrapedAt) : new Date();
     if (Number.isNaN(dates.getTime())) throw new Error('Invalid attendance snapshot date');
     const year = data.academicYear ?? core.academicYear(dates);
-    const profileMatches = core.matchesReport(modules, new Date(year, 8, 1));
     const storageKey = `vtc-hours-v2:${year}:${modules.map(m => m.value).sort().join(',')}`;
     let manual = {};
     try { manual = JSON.parse(read(storageKey, '{}')) || {}; } catch {}
@@ -106,7 +107,6 @@
       overall = modules.map(module => core.summarize({
         moduleCode: module.value, moduleText: module.text, rows: details.filter(d => d.moduleCode === module.value),
         events, officialHours: sourceMode === 'auto' ? data.officialHours?.[module.value] : undefined,
-        referenceHours: sourceMode === 'auto' && profileMatches ? core.report.hours[module.value] : undefined,
         manualHours: manual[module.value], fallbackTotal: data.fallbackTotals?.[module.value], threshold,
         calendarAvailable: data.calendarAvailable !== false, now: dates
       }));
@@ -131,7 +131,7 @@
     }
     function status(summary) {
       const s = summary.fullSummary || summary;
-      if (s.issues.some(i => ['totalTooSmall', 'unknownRecords', 'missingRecords'].includes(i))) return { key: 'verify', tone: 'neutral' };
+      if (s.issues.some(i => ['missingTotal', 'totalTooSmall', 'unknownRecords', 'missingRecords'].includes(i))) return { key: 'verify', tone: 'neutral' };
       if (s.bestStatus70 === 'CANNOT_REACH_70_EVEN_IF_FUTURE_PRESENT') return { key: 'unreachable', tone: 'danger' };
       if (s.currentHourRate == null) return { key: 'noRecord', tone: 'neutral' };
       if (s.status70 === 'BELOW_70_NOW') return { key: 'below', tone: 'warning' };
@@ -155,7 +155,6 @@
           <button type="button" class="vtc-edit-button" data-action="edit" aria-pressed="${edit}">${esc(t(edit ? 'done' : 'edit'))}</button>
         </section></details>
         <p class="vtc-explainer">${esc(t('headNote'))}</p>
-        ${profileMatches && sourceMode === 'auto' ? `<p class="vtc-reference">${esc(t('referenceNote'))}</p>` : ''}
         <section id="vtc-overview" class="vtc-overview" aria-label="${esc(t('modules'))}"></section>
         <div class="vtc-list-toolbar"><label class="vtc-search"><span class="vtc-sr-only">${esc(t('search'))}</span><input id="vtc-search" type="search" placeholder="${esc(t('search'))}" value="${esc(search)}"></label>
           <label class="vtc-filter">${esc(t('filter'))}<select id="vtc-filter">${option('all', t('all'), filter)}${option('attention', t('attention'), filter)}${option('verification', t('missing'), filter)}</select></label></div>
@@ -167,11 +166,12 @@
     }
     function card(s) {
       const state = status(s);
-      const origin = { portal: 'portal', report: 'report', calendar: 'estimate', manual: 'manual' }[s.hoursSource];
+      const origin = { portal: 'portal', calendar: 'estimate', manual: 'manual', unknown: 'unknown' }[s.hoursSource];
       const rows = (data.details || []).filter(r => r.moduleCode === s.moduleCode && (semester === 'Overall' || inRange(core.detailDate(r), data.semesterRanges.find(r => r.name === semester))));
       const severe = s.issues.filter(i => i !== 'calendarMismatch' && i !== 'estimatedTotal');
       const best = s.bestPossibleFullTermRate;
       const allowance = s.skipAllowanceHours;
+      const allowanceLabel = allowance == null ? 'unknownAllowance' : s.hoursSource === 'calendar' ? 'estimatedAllowance' : allowance > 0 ? 'allowance' : 'noAllowance';
       const loss = s.fullSummary?.deductedHours ?? s.deductedHours;
       return `<article class="vtc-module" data-code="${esc(s.moduleCode)}">
         <div class="vtc-module-heading"><div><h2>${esc(s.moduleCode)}${/M$/.test(s.moduleCode) ? `<span class="vtc-cross">${lang === 'zh' ? '跨學期' : 'Across semesters'}</span>` : ''}</h2><p>${esc(s.moduleText.replace(new RegExp('^' + s.moduleCode + '\\s*'), ''))}</p></div><span class="vtc-status" data-tone="${state.tone}">${esc(t(state.key))}</span></div>
@@ -181,8 +181,8 @@
           <div><span>${esc(t('remaining'))}</span><strong>${number(s.remainingHours)}<small> ${esc(t('h'))}</small></strong></div></div>
         ${s.allocated ? `<p class="vtc-inline-note">${esc(t('allocated'))}: ${number(s.totalCalendarScheduledHours)} ${esc(t('h'))}. ${esc(t('fullStatus'))}</p>` : ''}
         <div class="vtc-module-bottom"><p><span>${esc(t('loss'))}</span> <strong>${number(loss)} ${esc(t('h'))}</strong> <span class="vtc-divider">/</span> ${esc(t('absent'))} <strong>${number(s.overallEffectiveAbsentRate)}%</strong></p>
-          <div class="vtc-budget"><p class="vtc-allowance" data-tone="${allowance == null ? 'neutral' : allowance > 0 ? 'success' : 'warning'}">${esc(t(allowance == null ? 'unknownAllowance' : allowance > 0 ? 'allowance' : 'noAllowance'))}${allowance != null ? ` <strong>${number(allowance)} ${esc(t('h'))}</strong>` : ''}</p>${allowance != null ? `<p class="vtc-budget-condition">${esc(t('budgetCondition'))}</p>${s.requiredFutureAttendanceHours > 0 ? `<p>${esc(t('needAttend').replace('{hours}', number(s.requiredFutureAttendanceHours)).replace('{threshold}', threshold))}</p>` : ''}` : ''}</div></div>
-        ${edit ? `<form class="vtc-edit-form" data-code="${esc(s.moduleCode)}"><label for="hours-${esc(s.moduleCode)}">${esc(t('totalLabel'))}</label><input id="hours-${esc(s.moduleCode)}" class="vtc-hours-input" name="hours" type="number" inputmode="decimal" min="0.01" step="0.01" value="${number(s.totalCalendarScheduledHours).replaceAll(',', '')}" required aria-describedby="error-${esc(s.moduleCode)}"><button type="submit">${esc(t('done'))}</button>${manual[s.moduleCode] != null ? `<button type="button" data-action="reset" data-code="${esc(s.moduleCode)}">${esc(t('reset'))}</button>` : ''}<p id="error-${esc(s.moduleCode)}" class="vtc-field-error"></p></form>` : ''}
+          <div class="vtc-budget"><p class="vtc-allowance" data-tone="${allowance == null || s.hoursSource === 'calendar' ? 'neutral' : allowance > 0 ? 'success' : 'warning'}">${esc(t(allowanceLabel))}${allowance != null ? ` <strong>${number(allowance)} ${esc(t('h'))}</strong>` : ''}</p>${allowance != null ? `<p class="vtc-budget-condition">${esc(t('budgetCondition'))}</p>${s.requiredFutureAttendanceHours > 0 ? `<p>${esc(t('needAttend').replace('{hours}', number(s.requiredFutureAttendanceHours)).replace('{threshold}', threshold))}</p>` : ''}` : ''}</div></div>
+        ${edit ? `<form class="vtc-edit-form" data-code="${esc(s.moduleCode)}"><label for="hours-${esc(s.moduleCode)}">${esc(t('totalLabel'))}</label><input id="hours-${esc(s.moduleCode)}" class="vtc-hours-input" name="hours" type="number" inputmode="decimal" min="0.01" step="0.01" value="${s.totalCalendarScheduledHours == null ? '' : number(s.totalCalendarScheduledHours).replaceAll(',', '')}" required aria-describedby="error-${esc(s.moduleCode)}"><button type="submit">${esc(t('done'))}</button>${manual[s.moduleCode] != null ? `<button type="button" data-action="reset" data-code="${esc(s.moduleCode)}">${esc(t('reset'))}</button>` : ''}<p id="error-${esc(s.moduleCode)}" class="vtc-field-error"></p></form>` : ''}
         ${severe.length ? `<div class="vtc-data-note">${severe.map(i => `<p>${esc(t(i))}${i === 'missingRecords' ? ` (${number(s.unrecordedPastHours)} ${esc(t('h'))})` : ''}</p>`).join('')}</div>` : ''}
         <details class="vtc-details"><summary>${esc(t('details'))}<span>${rows.length} ${esc(t('count'))}</span></summary><div class="vtc-calculation"><p>${esc(t('recorded'))}: <strong>${number(s.attendanceRecordHours)} ${esc(t('h'))}</strong> · ${esc(t('raw'))}: <strong>${number(s.rawCalendarScheduledHours)} ${esc(t('h'))}</strong></p>${allowance != null ? `<p>${esc(t('budgetFormula'))}: <strong>max(0, ${number(s.fullSummary?.remainingHours ?? s.remainingHours)} − ${number(s.requiredFutureAttendanceHours)}) = ${number(allowance)} ${esc(t('h'))}</strong></p>` : ''}${s.currentSkipBufferHours != null ? `<p>${s.currentSkipBufferHours > 0 ? `${esc(t('currentBuffer').replace('{threshold}', threshold))}: <strong>${number(s.currentSkipBufferHours)} ${esc(t('h'))}</strong>` : esc(t('noCurrentBuffer').replace('{threshold}', threshold))}</p>` : ''}${s.issues.includes('calendarMismatch') ? `<p>${esc(t('calendarMismatch'))}</p>` : ''}${s.issues.includes('estimatedTotal') ? `<p>${esc(t('estimatedTotal'))}</p>` : ''}</div>
           ${rows.length ? `<div class="vtc-record-scroll" tabindex="0" role="region" aria-label="${esc(s.moduleCode)} ${esc(t('details'))}"><table><caption class="vtc-sr-only">${esc(s.moduleCode)} ${esc(t('details'))}</caption><thead><tr>${['date', 'status', 'lesson', 'arrival', 'room'].map(k => `<th scope="col">${esc(t(k))}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r.date)}</td><td>${esc(core.statusOf(r) === 'present' ? t('present') : core.statusOf(r) === 'late' ? t('late') : core.statusOf(r) === 'absent' ? t('absentStatus') : r.status)}</td><td>${esc(r.lessonTime)}</td><td>${esc(r.attendTime)}</td><td>${esc(r.room)}</td></tr>`).join('')}</tbody></table></div>` : `<p class="vtc-calculation">${esc(t('noRecord'))}</p>`}</details></article>`;

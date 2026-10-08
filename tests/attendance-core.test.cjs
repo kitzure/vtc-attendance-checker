@@ -6,19 +6,22 @@ const row = (date, status, lessonTime, attendTime = '-') => ({ moduleCode: 'ITP4
 const event = (start, end, extra = {}) => ({ summary: 'ITP4206 Mobile development', start, end, ...extra });
 const summary = options => core.summarize({ moduleCode: 'ITP4206', moduleText: 'ITP4206 Mobile development', now, ...options });
 
-test('school report totals are scoped to the exact module set and academic year', () => {
-  const modules = Object.keys(core.report.hours).map(value => ({ value }));
-  assert.ok(core.matchesReport(modules, now));
-  assert.ok(!core.matchesReport(modules, new Date(2027, 9, 8)));
-  assert.ok(!core.matchesReport(modules.slice(1), now));
-  assert.ok(!core.matchesReport([...modules, { value: 'ENG9999' }], now));
-  assert.deepEqual(core.report.hours, { ENG3446: 13, ITE4116M: 104, ITP4206: 52, ITP4230: 52, ITP4233: 39, LAN4103: 26, SDD4007: 13 });
+test('records alone do not imply a complete module total for any cohort', () => {
+  for (const moduleCode of ['ITP4206', 'ENG9999', 'ITE4116M']) {
+    const s = summary({ moduleCode, rows: [row('07/10/2026', 'Present', '10:00 - 12:00')], calendarAvailable: false });
+    assert.equal(s.attendanceRecordHours, 2);
+    assert.equal(s.currentHourRate, 100);
+    assert.equal(s.calendarScheduledHours, null);
+    assert.equal(s.hoursSource, 'unknown');
+    assert.equal(s.skipAllowanceHours, null);
+    assert.ok(s.issues.includes('missingTotal'));
+  }
 });
-test('manual > portal > matching school report > timetable', () => {
-  const options = { events: [event('2026-10-09T10:00:00', '2026-10-09T12:00:00')], referenceHours: 52, officialHours: 48, manualHours: 50 };
+test('manual > portal > timetable; no personal report defaults', () => {
+  const options = { events: [event('2026-10-09T10:00:00', '2026-10-09T12:00:00')], officialHours: 48, manualHours: 50 };
   assert.equal(summary(options).calendarScheduledHours, 50);
   assert.equal(summary({ ...options, manualHours: undefined }).hoursSource, 'portal');
-  assert.equal(summary({ ...options, manualHours: undefined, officialHours: undefined }).calendarScheduledHours, 52);
+  assert.equal(summary({ ...options, manualHours: undefined, officialHours: undefined }).calendarScheduledHours, 2);
   assert.equal(summary({ events: options.events }).calendarScheduledHours, 2);
 });
 test('Present respects the portal grace period, Late subtracts actual minutes', () => {
@@ -30,7 +33,7 @@ test('Present respects the portal grace period, Late subtracts actual minutes', 
 test('invalid or unknown records do not turn into full attendance', () => {
   assert.equal(core.attendedMinutesFromRow(row('', 'Pending', '10:00 - 12:00')), null);
   assert.equal(core.attendedMinutesFromRow(row('', 'Late', '10:00 - 12:00')), null);
-  const s = summary({ rows: [row('01/10/2026', 'Pending', '10:00 - 12:00')], referenceHours: 52 });
+  const s = summary({ rows: [row('01/10/2026', 'Pending', '10:00 - 12:00')], officialHours: 52 });
   assert.equal(s.currentHourRate, null);
   assert.equal(s.bestPossibleFullTermRate, null);
   assert.equal(s.skipAllowanceHours, null);
@@ -92,7 +95,7 @@ test('no calendar timeline preserves imported total and still calculates the hou
 });
 test('provided ENG3446 example preserves minute precision', () => {
   const rows = [row('04/09/2026', 'Late', '14:00 - 17:30', '14:30'), row('11/09/2026', 'Absent', '14:00 - 17:30'), row('18/09/2026', 'Late', '14:00 - 17:30', '14:25'), row('25/09/2026', 'Present', '14:00 - 16:30', '13:59')];
-  const s = summary({ rows, referenceHours: 13, calendarAvailable: false });
+  const s = summary({ rows, manualHours: 13, calendarAvailable: false });
   assert.equal(s.attendanceRecordHours, 13);
   assert.equal(s.attendedHours, 8.58);
   assert.equal(s.deductedHours, 4.42);
@@ -100,7 +103,7 @@ test('provided ENG3446 example preserves minute precision', () => {
   assert.equal(s.effectiveAbsentRate, 34);
 });
 test('rounding a displayed percentage cannot change requirement eligibility', () => {
-  const s = summary({ rows: [row('07/10/2026', 'Absent', '09:00 - 12:00'), row('07/10/2026', 'Present', '12:00 - 19:00', '12:00')], referenceHours: 9.99999 });
+  const s = summary({ rows: [row('07/10/2026', 'Absent', '09:00 - 12:00'), row('07/10/2026', 'Present', '12:00 - 19:00', '12:00')], officialHours: 9.99999 });
   assert.equal(s.bestPossibleFullTermRate, 70);
   assert.equal(s.bestStatus70, 'CANNOT_REACH_70_EVEN_IF_FUTURE_PRESENT');
 });
@@ -114,7 +117,7 @@ test('screenshot ITP4230: 5.7h module budget, 30.8h still required, no current-r
     row('29/09/2026', 'Absent', '15:00 - 17:30'),
     row('06/10/2026', 'Present', '15:00 - 17:30', '14:55')
   ];
-  const options = { rows, referenceHours: 52, calendarAvailable: false };
+  const options = { rows, manualHours: 52, calendarAvailable: false };
   const s = summary(options);
   assert.equal(s.attendedHours, 5.6);
   assert.equal(s.attendanceRecordHours, 15.5);
@@ -134,10 +137,10 @@ test('screenshot ITP4230: 5.7h module budget, 30.8h still required, no current-r
 });
 test('a complete module or exhausted absence budget cannot create extra skip hours', () => {
   const rows = [row('07/10/2026', 'Present', '10:00 - 12:00', '10:00')];
-  const completed = summary({ rows, referenceHours: 2, calendarAvailable: false });
+  const completed = summary({ rows, officialHours: 2, calendarAvailable: false });
   assert.equal(completed.skipAllowanceHours, 0);
   assert.equal(completed.currentSkipBufferHours, 0);
-  const s = summary({ rows: [row('07/10/2026', 'Absent', '10:00 - 12:00')], referenceHours: 4, calendarAvailable: false });
+  const s = summary({ rows: [row('07/10/2026', 'Absent', '10:00 - 12:00')], officialHours: 4, calendarAvailable: false });
   assert.equal(s.skipAllowanceHours, 0);
   assert.equal(s.bestStatus70, 'CANNOT_REACH_70_EVEN_IF_FUTURE_PRESENT');
 });

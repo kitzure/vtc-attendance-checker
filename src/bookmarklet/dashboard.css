@@ -34,7 +34,6 @@
 #vtc-attendance-dashboard-overlay .vtc-edit-button { border-color: var(--accent); color: var(--accent); }
 #vtc-attendance-dashboard-overlay .vtc-edit-button[aria-pressed=true] { background: var(--accent); color: var(--surface); }
 #vtc-attendance-dashboard-overlay .vtc-explainer { font-size: 13px; color: var(--muted); margin: 14px 0 8px; max-width: 86ch; }
-#vtc-attendance-dashboard-overlay .vtc-reference { font-size: 12px; color: var(--muted); max-width: 105ch; border-left: 2px solid var(--accent); padding-left: 10px; margin-bottom: 20px; }
 #vtc-attendance-dashboard-overlay .vtc-overview { display: flex; gap: 0; padding: 20px 0 24px; border-bottom: 1px solid var(--line); }
 #vtc-attendance-dashboard-overlay .vtc-overview div { display: flex; align-items: baseline; gap: 10px; padding-inline: 28px; border-left: 1px solid var(--line); }
 #vtc-attendance-dashboard-overlay .vtc-overview div:first-child { padding-left: 0; border: 0; }
@@ -123,7 +122,6 @@
   #vtc-attendance-dashboard-overlay .vtc-header h1 { font-size: 30px; }
   #vtc-attendance-dashboard-overlay .vtc-top-actions { width: auto; margin-left: auto; }
   #vtc-attendance-dashboard-overlay .vtc-top-actions select { max-width: 108px; }
-  #vtc-attendance-dashboard-overlay .vtc-reference { margin-bottom: 4px; }
   #vtc-attendance-dashboard-overlay .vtc-overview { padding-block: 14px; }
   #vtc-attendance-dashboard-overlay .vtc-list-toolbar { margin-top: 16px; }
   #vtc-attendance-dashboard-overlay h1 { font-size: 34px; }

@@ -33,7 +33,7 @@ const assert = require('node:assert/strict');
   assert.equal(s.calendarScheduledHours, 50);
   assert.equal(s.hoursSource, 'portal');
   assert.equal(s.currentHourRate, 100);
-  assert.equal(cached.semesterSummaries.Overall.find(s => s.moduleCode === 'ITE4116M').calendarScheduledHours, 104);
+  assert.equal(cached.semesterSummaries.Overall.find(s => s.moduleCode === 'ITE4116M').calendarScheduledHours, null);
   assert.equal(await page.evaluate(() => window.vtcIntegratedScraper), false);
   assert.equal(await page.evaluate(() => window._vtcPreventLeave), null);
   assert.equal(await page.locator('iframe').count(), 0);
@@ -50,8 +50,23 @@ const assert = require('node:assert/strict');
   assert.equal(retriedModule.skipAllowanceHours, 15);
   assert.equal(retriedModule.requiredFutureAttendanceHours, 33);
   assert.ok(retriedModule.issues.includes('noTimeline'));
+  const extracted = await page.evaluate(() => {
+    const parse = (html, code = '') => VtcAttendanceCore.extractOfficialHours(new DOMParser().parseFromString(html, 'text/html'), code);
+    return {
+      columns: parse('<table><tr><th>Module</th><th>Total contact hours</th><th>Credits</th></tr><tr><td>ABC1234 Sample</td><td>27.5 h</td><td>3</td></tr><tr><td>XYZ9876</td><td>42</td><td>6</td></tr></table>'),
+      paired: parse('<table><tr><td>Total teaching hours</td><td>42</td></tr></table>', 'XYZ9876'),
+      chinese: parse('<p>ABC1234 總課時：27.5 小時</p>'),
+      other: parse('<p>XYZ9876 Total contact hours: 42</p>', 'ABC1234'),
+      conflict: parse('<p>Total contact hours: 42</p><p>Total hours: 40</p>', 'XYZ9876'),
+      irrelevant: parse('<p>Credits: 3</p><p>Attendance: 70%</p><p>Lesson hours: 2</p>', 'ABC1234')
+    };
+  });
+  assert.deepEqual(extracted, {
+    columns: { ABC1234: 27.5, XYZ9876: 42 }, paired: { XYZ9876: 42 }, chinese: { ABC1234: 27.5 },
+    other: { XYZ9876: 42 }, conflict: {}, irrelevant: {}
+  });
   await page.goto('http://127.0.0.1:4173/src/bookmarklet/help.html');
   assert.ok((await page.locator('#bmCodeCombined').inputValue()).includes('http://127.0.0.1:4173/src/bookmarklet/vtc-combined-grabber.js'));
-  console.log('Bookmarklet fixture checks passed: full calendar/profile/form scraping, placeholder exclusion, portal total precedence, report fallback, grace-period Present, cache, iframe/unload cleanup, calendar failure recovery, rerun, local loader.');
+  console.log('Bookmarklet fixture checks passed: generic explicit total extraction, conflicts/credits rejected, no school defaults, calendar/profile/form scraping, portal precedence, grace-period Present, cache, cleanup, calendar failure recovery, rerun, local loader.');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
