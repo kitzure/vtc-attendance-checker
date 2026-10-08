@@ -1,0 +1,149 @@
+#vtc-attendance-dashboard-overlay {
+  --canvas: #f3f5f4; --surface: #fff; --text: #172a2b; --muted: #536768; --line: #d9e2df; --accent: #146b66;
+  --success: #17634c; --success-bg: #e9f4ef; --warning: #865817; --warning-bg: #fff4df; --danger: #a63239; --danger-bg: #fceef0;
+  color-scheme: light; position: fixed; inset: 0; margin: 0; width: 100%; height: 100%; max-width: none; max-height: none;
+  padding: 0; border: 0; overflow-y: auto; background: var(--canvas); color: var(--text); font: 15px/1.5 'Segoe UI', system-ui, sans-serif;
+}
+#vtc-attendance-dashboard-overlay[data-theme=dark] {
+  --canvas: #101b1d; --surface: #19282a; --text: #e9f0ed; --muted: #acc0bd; --line: #354747; --accent: #83d1c5;
+  --success: #92d8b7; --success-bg: #203d33; --warning: #f0cc87; --warning-bg: #3d3425; --danger: #f2a2a8; --danger-bg: #402b30; color-scheme: dark;
+}
+#vtc-attendance-dashboard-overlay::backdrop { background: #172a2b99; }
+#vtc-attendance-dashboard-overlay *, #vtc-attendance-dashboard-overlay *::before, #vtc-attendance-dashboard-overlay *::after { box-sizing: border-box; }
+#vtc-attendance-dashboard-overlay .vtc-page { max-width: 1180px; margin: auto; padding: 36px 48px 28px; }
+#vtc-attendance-dashboard-overlay h1, #vtc-attendance-dashboard-overlay h2, #vtc-attendance-dashboard-overlay p { margin: 0; }
+#vtc-attendance-dashboard-overlay button, #vtc-attendance-dashboard-overlay select, #vtc-attendance-dashboard-overlay input {
+  font: inherit; color: var(--text); border: 1px solid var(--line); border-radius: 7px; padding: 9px 12px; background: var(--surface); min-height: 42px; max-width: 100%;
+}
+#vtc-attendance-dashboard-overlay button { cursor: pointer; font-weight: 600; }
+#vtc-attendance-dashboard-overlay button:hover { border-color: var(--accent); background: var(--canvas); }
+#vtc-attendance-dashboard-overlay button:active { transform: translateY(1px); }
+#vtc-attendance-dashboard-overlay button:disabled { opacity: .5; cursor: default; }
+#vtc-attendance-dashboard-overlay :is(button, select, input, summary, [tabindex]):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+#vtc-attendance-dashboard-overlay .vtc-header { display: flex; justify-content: space-between; gap: 24px; align-items: center; margin-bottom: 28px; }
+#vtc-attendance-dashboard-overlay .vtc-eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .07em; margin-bottom: 6px; }
+#vtc-attendance-dashboard-overlay h1 { font-size: 38px; font-weight: 650; letter-spacing: -.04em; line-height: 1.15; }
+#vtc-attendance-dashboard-overlay .vtc-title-count { font-size: 16px; font-weight: 500; letter-spacing: 0; margin-left: 12px; color: var(--muted); vertical-align: middle; }
+#vtc-attendance-dashboard-overlay .vtc-top-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+#vtc-attendance-dashboard-overlay .vtc-top-actions [data-action=theme] { width: 42px; padding: 4px; font-size: 23px; }
+#vtc-attendance-dashboard-overlay .vtc-top-actions [data-action=close] span { font-size: 18px; margin-left: 10px; }
+#vtc-attendance-dashboard-overlay .vtc-controls { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1.2fr) auto; align-items: end; gap: 16px; border-block: 1px solid var(--line); padding: 20px 0; }
+#vtc-attendance-dashboard-overlay .vtc-settings > summary { display: none; }
+#vtc-attendance-dashboard-overlay .vtc-controls label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); min-width: 0; }
+#vtc-attendance-dashboard-overlay select { font-size: 14px; }
+#vtc-attendance-dashboard-overlay .vtc-edit-button { border-color: var(--accent); color: var(--accent); }
+#vtc-attendance-dashboard-overlay .vtc-edit-button[aria-pressed=true] { background: var(--accent); color: var(--surface); }
+#vtc-attendance-dashboard-overlay .vtc-explainer { font-size: 13px; color: var(--muted); margin: 14px 0 8px; max-width: 86ch; }
+#vtc-attendance-dashboard-overlay .vtc-reference { font-size: 12px; color: var(--muted); max-width: 105ch; border-left: 2px solid var(--accent); padding-left: 10px; margin-bottom: 20px; }
+#vtc-attendance-dashboard-overlay .vtc-overview { display: flex; gap: 0; padding: 20px 0 24px; border-bottom: 1px solid var(--line); }
+#vtc-attendance-dashboard-overlay .vtc-overview div { display: flex; align-items: baseline; gap: 10px; padding-inline: 28px; border-left: 1px solid var(--line); }
+#vtc-attendance-dashboard-overlay .vtc-overview div:first-child { padding-left: 0; border: 0; }
+#vtc-attendance-dashboard-overlay .vtc-overview strong { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+#vtc-attendance-dashboard-overlay .vtc-overview span { color: var(--muted); font-size: 13px; }
+#vtc-attendance-dashboard-overlay .vtc-list-toolbar { display: flex; align-items: center; gap: 16px; justify-content: space-between; margin: 24px 0 16px; }
+#vtc-attendance-dashboard-overlay .vtc-search { flex: 1; max-width: 460px; min-width: 0; }
+#vtc-attendance-dashboard-overlay .vtc-search input { width: 100%; }
+#vtc-attendance-dashboard-overlay .vtc-filter { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+#vtc-attendance-dashboard-overlay .vtc-module-list { display: flex; flex-direction: column; gap: 16px; }
+#vtc-attendance-dashboard-overlay .vtc-module { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+#vtc-attendance-dashboard-overlay .vtc-module-heading { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding: 22px 24px 14px; }
+#vtc-attendance-dashboard-overlay .vtc-module-heading h2 { font-size: 18px; letter-spacing: .01em; font-weight: 650; }
+#vtc-attendance-dashboard-overlay .vtc-module-heading p { font-size: 13px; color: var(--muted); max-width: 70ch; margin-top: 3px; overflow-wrap: anywhere; }
+#vtc-attendance-dashboard-overlay .vtc-cross { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 10px; letter-spacing: 0; }
+#vtc-attendance-dashboard-overlay .vtc-status { border-radius: 5px; padding: 4px 8px; font-size: 12px; font-weight: 600; flex-shrink: 0; background: var(--canvas); color: var(--muted); }
+#vtc-attendance-dashboard-overlay [data-tone=success] { color: var(--success); }
+#vtc-attendance-dashboard-overlay [data-tone=warning] { color: var(--warning); }
+#vtc-attendance-dashboard-overlay [data-tone=danger] { color: var(--danger); }
+#vtc-attendance-dashboard-overlay .vtc-status[data-tone=success] { background: var(--success-bg); }
+#vtc-attendance-dashboard-overlay .vtc-status[data-tone=warning] { background: var(--warning-bg); }
+#vtc-attendance-dashboard-overlay .vtc-status[data-tone=danger] { background: var(--danger-bg); }
+#vtc-attendance-dashboard-overlay .vtc-metrics { display: grid; grid-template-columns: 1.1fr .9fr 1.35fr .9fr; gap: 24px; padding: 4px 24px 22px; }
+#vtc-attendance-dashboard-overlay .vtc-metrics > div { min-width: 0; }
+#vtc-attendance-dashboard-overlay .vtc-metrics span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 5px; }
+#vtc-attendance-dashboard-overlay .vtc-metrics strong { display: block; font-size: 26px; font-weight: 600; line-height: 1.25; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+#vtc-attendance-dashboard-overlay .vtc-metrics small { font-size: 16px; font-weight: 400; color: var(--muted); letter-spacing: 0; }
+#vtc-attendance-dashboard-overlay .vtc-metrics .vtc-source { margin: 7px 0 0; color: var(--accent); font-size: 11px; }
+#vtc-attendance-dashboard-overlay .vtc-progress { height: 4px; background: var(--line); position: relative; margin-top: 10px; }
+#vtc-attendance-dashboard-overlay .vtc-progress i { display: block; height: 100%; background: var(--accent); }
+#vtc-attendance-dashboard-overlay .vtc-progress b { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--warning); }
+#vtc-attendance-dashboard-overlay .vtc-module-bottom { border-top: 1px solid var(--line); padding: 12px 24px; display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+#vtc-attendance-dashboard-overlay .vtc-module-bottom strong { font-weight: 600; font-variant-numeric: tabular-nums; }
+#vtc-attendance-dashboard-overlay .vtc-budget { flex: 1 1 280px; max-width: 440px; }
+#vtc-attendance-dashboard-overlay .vtc-budget p + p { margin-top: 3px; }
+#vtc-attendance-dashboard-overlay .vtc-allowance { font-size: 13px; }
+#vtc-attendance-dashboard-overlay .vtc-allowance strong { font-size: 16px; margin-left: 4px; }
+#vtc-attendance-dashboard-overlay .vtc-divider { margin: 0 8px; color: var(--line); }
+#vtc-attendance-dashboard-overlay .vtc-details { border-top: 1px solid var(--line); }
+#vtc-attendance-dashboard-overlay .vtc-details summary { padding: 12px 24px; cursor: pointer; color: var(--muted); font-size: 12px; }
+#vtc-attendance-dashboard-overlay .vtc-details summary span { float: right; font-variant-numeric: tabular-nums; }
+#vtc-attendance-dashboard-overlay .vtc-calculation { padding: 8px 24px 16px; font-size: 13px; color: var(--muted); }
+#vtc-attendance-dashboard-overlay .vtc-record-scroll { overflow: auto; max-height: 360px; margin: 0 24px 20px; }
+#vtc-attendance-dashboard-overlay table { border-collapse: collapse; width: 100%; min-width: 620px; font: inherit; font-size: 12px; }
+#vtc-attendance-dashboard-overlay th { font-weight: 600; background: var(--canvas); text-align: left; }
+#vtc-attendance-dashboard-overlay td, #vtc-attendance-dashboard-overlay th { padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+#vtc-attendance-dashboard-overlay .vtc-data-note { padding: 10px 24px; font-size: 12px; background: var(--canvas); color: var(--muted); border-top: 1px solid var(--line); }
+#vtc-attendance-dashboard-overlay .vtc-inline-note { padding: 0 24px 14px; color: var(--muted); font-size: 12px; }
+#vtc-attendance-dashboard-overlay .vtc-edit-form { border-top: 1px solid var(--line); padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+#vtc-attendance-dashboard-overlay .vtc-edit-form label { font-size: 13px; }
+#vtc-attendance-dashboard-overlay .vtc-edit-form input { width: 100px; }
+#vtc-attendance-dashboard-overlay .vtc-field-error { flex-basis: 100%; color: var(--danger); font-size: 12px; }
+#vtc-attendance-dashboard-overlay input[aria-invalid=true] { border-color: var(--danger); }
+#vtc-attendance-dashboard-overlay .vtc-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-top: 1px solid var(--line); margin-top: 28px; padding-top: 20px; font-size: 12px; color: var(--muted); }
+#vtc-attendance-dashboard-overlay .vtc-footer strong { font-size: 13px; color: var(--text); }
+#vtc-attendance-dashboard-overlay .vtc-export { display: flex; flex-wrap: wrap; gap: 8px; }
+#vtc-attendance-dashboard-overlay .vtc-export :is(select, button) { font-size: 12px; }
+#vtc-attendance-dashboard-overlay .vtc-empty { padding: 48px 24px; text-align: center; border: 1px dashed var(--line); border-radius: 8px; }
+#vtc-attendance-dashboard-overlay .vtc-empty h2 { font-size: 18px; } 
+#vtc-attendance-dashboard-overlay .vtc-empty p { margin-top: 6px; color: var(--muted); }
+#vtc-attendance-dashboard-overlay .vtc-message { margin-top: 12px; color: var(--success); font-size: 13px; }
+#vtc-attendance-dashboard-overlay .vtc-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#vtc-attendance-dashboard-overlay .vtc-ics-modal { width: min(440px, calc(100% - 32px)); padding: 24px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); max-height: 85vh; }
+#vtc-attendance-dashboard-overlay .vtc-ics-modal h2 { font-size: 20px; margin-bottom: 16px; }
+#vtc-attendance-dashboard-overlay .vtc-ics-modal label { display: flex; align-items: center; gap: 10px; min-height: 42px; }
+#vtc-attendance-dashboard-overlay .vtc-ics-modal input { min-height: auto; width: 18px; height: 18px; accent-color: var(--accent); }
+#vtc-attendance-dashboard-overlay .vtc-ics-options { max-height: 40vh; overflow: auto; margin-block: 12px; border-block: 1px solid var(--line); }
+#vtc-attendance-dashboard-overlay .vtc-dialog-actions { display: flex; gap: 8px; justify-content: end; }
+#vtc-attendance-dashboard-overlay .vtc-ics-modal::backdrop { background: #0008; }
+@media (max-width: 820px) {
+  #vtc-attendance-dashboard-overlay .vtc-page { padding: 28px 24px; }
+  #vtc-attendance-dashboard-overlay .vtc-controls { grid-template-columns: 1fr 1fr; gap: 14px; }
+  #vtc-attendance-dashboard-overlay .vtc-footer { flex-direction: column; align-items: start; }
+  #vtc-attendance-dashboard-overlay .vtc-metrics { gap: 16px; }
+  #vtc-attendance-dashboard-overlay .vtc-metrics strong { font-size: 23px; }
+}
+@media (max-width: 560px) {
+  #vtc-attendance-dashboard-overlay .vtc-page { padding: 22px 16px; }
+  #vtc-attendance-dashboard-overlay .vtc-header { flex-direction: column; align-items: start; gap: 16px; margin-bottom: 20px; }
+  #vtc-attendance-dashboard-overlay .vtc-top-actions { width: 100%; }
+  #vtc-attendance-dashboard-overlay .vtc-top-actions [data-action=close] { margin-left: auto; }
+  #vtc-attendance-dashboard-overlay .vtc-settings > summary { display: list-item; padding: 12px 0; border-block: 1px solid var(--line); cursor: pointer; font-size: 13px; color: var(--muted); }
+  #vtc-attendance-dashboard-overlay .vtc-settings > summary span { float: right; font-variant-numeric: tabular-nums; }
+  #vtc-attendance-dashboard-overlay .vtc-controls { border-top: 0; }
+  #vtc-attendance-dashboard-overlay .vtc-header { flex-direction: row; flex-wrap: wrap; }
+  #vtc-attendance-dashboard-overlay .vtc-header h1 { font-size: 30px; }
+  #vtc-attendance-dashboard-overlay .vtc-top-actions { width: auto; margin-left: auto; }
+  #vtc-attendance-dashboard-overlay .vtc-top-actions select { max-width: 108px; }
+  #vtc-attendance-dashboard-overlay .vtc-reference { margin-bottom: 4px; }
+  #vtc-attendance-dashboard-overlay .vtc-overview { padding-block: 14px; }
+  #vtc-attendance-dashboard-overlay .vtc-list-toolbar { margin-top: 16px; }
+  #vtc-attendance-dashboard-overlay h1 { font-size: 34px; }
+  #vtc-attendance-dashboard-overlay :is(select, input) { font-size: 16px; }
+  #vtc-attendance-dashboard-overlay .vtc-overview { justify-content: space-between; }
+  #vtc-attendance-dashboard-overlay .vtc-overview div { padding-inline: 12px; flex-direction: column; gap: 0; }
+  #vtc-attendance-dashboard-overlay .vtc-overview span { font-size: 11px; }
+  #vtc-attendance-dashboard-overlay .vtc-list-toolbar { align-items: stretch; flex-direction: column; gap: 10px; }
+  #vtc-attendance-dashboard-overlay .vtc-search { max-width: none; }
+  #vtc-attendance-dashboard-overlay .vtc-filter select { flex: 1; }
+  #vtc-attendance-dashboard-overlay .vtc-module-heading { padding: 18px 16px 14px; gap: 10px; }
+  #vtc-attendance-dashboard-overlay .vtc-module-heading h2 { font-size: 17px; }
+  #vtc-attendance-dashboard-overlay .vtc-status { max-width: 112px; flex-shrink: 1; text-align: center; }
+  #vtc-attendance-dashboard-overlay .vtc-cross { display: block; margin: 4px 0 0; }
+  #vtc-attendance-dashboard-overlay .vtc-metrics { grid-template-columns: 1fr 1fr; gap: 22px 16px; padding: 0 16px 20px; }
+  #vtc-attendance-dashboard-overlay .vtc-metrics strong { font-size: 25px; }
+  #vtc-attendance-dashboard-overlay .vtc-metrics small { font-size: 15px; }
+  #vtc-attendance-dashboard-overlay .vtc-module-bottom, #vtc-attendance-dashboard-overlay .vtc-details summary, #vtc-attendance-dashboard-overlay .vtc-edit-form, #vtc-attendance-dashboard-overlay .vtc-data-note, #vtc-attendance-dashboard-overlay .vtc-calculation { padding-inline: 16px; }
+  #vtc-attendance-dashboard-overlay .vtc-record-scroll { margin-inline: 16px; }
+  #vtc-attendance-dashboard-overlay .vtc-export { width: 100%; }
+  #vtc-attendance-dashboard-overlay .vtc-export select { flex: 1; font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { #vtc-attendance-dashboard-overlay *, #vtc-integrated-status { animation: none !important; transition: none !important; } }

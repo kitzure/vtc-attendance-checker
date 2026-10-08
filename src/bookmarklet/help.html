@@ -520,6 +520,13 @@
         setLang(lang);
       })();
 
+      // Point at the copy being served, so local previews and forks load their
+      // own rebuilt script rather than silently running the original release.
+      if (location.protocol === 'http:' || location.protocol === 'https:') {
+        var grabberUrl = new URL('vtc-combined-grabber.js', location.href).href;
+        document.getElementById('bmCodeCombined').value = 'javascript:(function(d){var s=d.createElement("script");s.src=' + JSON.stringify(grabberUrl + '?t=') + '+Math.floor(Date.now()/60000);d.body.append(s);})(document);';
+      }
+
       document.querySelectorAll('.copy-bm-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var target = document.getElementById(this.getAttribute('data-target'));

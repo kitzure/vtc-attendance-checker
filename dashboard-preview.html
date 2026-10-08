@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VTC attendance · local preview</title><link rel="stylesheet" href="src/bookmarklet/dashboard.css">
+<style>body{font:16px/1.6 system-ui;margin:0;background:#f3f5f4;color:#172a2b}main{max-width:720px;margin:8vh auto;padding:24px}h1{line-height:1.2}label{display:block;margin-top:20px}input,button{font:inherit;padding:10px;border:1px solid #b5c5be;border-radius:6px}button{margin-top:24px;background:#146b66;color:white}#error{color:#a63239}</style></head>
+<body><main><h1>Preview your attendance</h1><p>Choose the checker's summary and details JSON exports. They stay in this browser.</p>
+<form id="import"><label>Summary JSON <input id="summary" type="file" accept=".json,application/json" required></label><label>Details JSON <input id="details" type="file" accept=".json,application/json" required></label><label>Snapshot date <input id="date" type="date" required></label><button>Open dashboard</button><p id="error" role="alert"></p></form></main>
+<script src="src/bookmarklet/attendance-core.js"></script><script src="src/bookmarklet/dashboard.js"></script>
+<script>
+window.previewDashboard = null;
+const openPreview = data => { window.previewDashboard = VtcAttendanceDashboard.mount(data); };
+document.getElementById('date').value = new Date().toLocaleDateString('en-CA');
+fetch('.local-preview/data.json').then(r => r.ok ? r.json() : null).then(data => { if (data) openPreview(data); }).catch(() => {});
+document.getElementById('import').addEventListener('submit', async e => {
+  e.preventDefault();
+  try {
+    const summaries = JSON.parse(await document.getElementById('summary').files[0].text());
+    const details = JSON.parse(await document.getElementById('details').files[0].text());
+    if (!Array.isArray(summaries) || !Array.isArray(details) || summaries.some(s => !/^[A-Z]{2,4}\d{4}[A-Z]?$/.test(s.moduleCode) || typeof s.moduleText !== 'string') || details.some(d => typeof d.moduleCode !== 'string')) throw new Error('Choose the original summary and details JSON arrays.');
+    openPreview({ modules: summaries.map(s => ({ value: s.moduleCode, text: s.moduleText })), details, fallbackTotals: Object.fromEntries(summaries.map(s => [s.moduleCode, s.calendarScheduledHours])), calendarEvents: [], calendarAvailable: false, preview: true, scrapedAt: document.getElementById('date').value + 'T12:00:00+08:00' });
+  } catch (error) { document.getElementById('error').textContent = error.message; }
+});
+</script></body></html>
